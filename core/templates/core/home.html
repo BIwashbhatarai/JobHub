@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home | JobHub
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+.hero{
+    text-align:center;
+    padding:80px 20px;
+}
+
+.hero h1{
+    font-size:50px;
+    color:#2563eb;
+    margin-bottom:20px;
+}
+
+.hero p{
+    font-size:20px;
+    color:#555;
+    margin-bottom:30px;
+}
+
+.features{
+    display:flex;
+    justify-content:space-between;
+    gap:25px;
+    margin-top:70px;
+}
+
+.card{
+    flex:1;
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    text-align:center;
+    box-shadow:0 0 15px rgba(0,0,0,.1);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+.card h2{
+    color:#2563eb;
+    margin-bottom:15px;
+}
+
+.card p{
+    color:#555;
+    line-height:1.6;
+}
+
+.stats{
+    display:flex;
+    justify-content:space-around;
+    text-align:center;
+    margin:80px 0;
+}
+
+.stat h2{
+    font-size:36px;
+    color:#2563eb;
+}
+
+.stat p{
+    color:#555;
+}
+
+</style>
+
+<section class="hero">
+
+    <h1>Welcome to JobHub 🚀</h1>
+
+    <p>
+        Find your dream job or hire talented professionals with ease.
+    </p>
+
+    <a href="#" class="btn">Browse Jobs</a>
+    <a href="#" class="btn">Post a Job</a>
+
+</section>
+
+<section class="features">
+
+    <div class="card">
+        <h2>👨‍💼 For Job Seekers</h2>
+
+        <p>
+            Build your profile, upload your resume, and apply to jobs from top companies.
+        </p>
+
+    </div>
+
+    <div class="card">
+
+        <h2>🏢 For Recruiters</h2>
+
+        <p>
+            Post jobs, manage applications, and hire the best candidates quickly.
+        </p>
+
+    </div>
+
+    <div class="card">
+
+        <h2>⚡ Easy & Fast</h2>
+
+        <p>
+            A modern job portal built using Django with authentication, profiles, job posting, and applications.
+        </p>
+
+    </div>
+
+</section>
+
+<section class="stats">
+
+    <div class="stat">
+        <h2>1000+</h2>
+        <p>Job Listings</p>
+    </div>
+
+    <div class="stat">
+        <h2>500+</h2>
+        <p>Companies</p>
+    </div>
+
+    <div class="stat">
+        <h2>5000+</h2>
+        <p>Candidates</p>
+    </div>
+
+</section>
+
+{% endblock %}
