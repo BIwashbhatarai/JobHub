@@ -8,7 +8,7 @@ class User(AbstractUser):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    skills = models.TextField(blank=True)
+    skills = models.CharField(max_length=255, blank=True)
     profile_picture = models.ImageField(upload_to="profile/", blank=True, null=True)
     phone = models.CharField(max_length=15, blank=True)
     address = models.CharField(max_length=255, blank=True)

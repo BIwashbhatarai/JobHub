@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+
+<style>
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family:Arial, Helvetica, sans-serif;
+    }
+
+    body{
+        background:#f4f6f9;
+    }
+
+    .container{
+        max-width:900px;
+        margin:40px auto;
+        padding:20px;
+    }
+
+    .profile-card{
+        background:#fff;
+        border-radius:12px;
+        overflow:hidden;
+        box-shadow:0 10px 25px rgba(0,0,0,.08);
+    }
+
+    .profile-header{
+        background:linear-gradient(135deg,#0d6efd,#0b5ed7);
+        color:#fff;
+        text-align:center;
+        padding:35px 20px;
+    }
+
+    .profile-image{
+        width:140px;
+        height:140px;
+        border-radius:50%;
+        background:#fff;
+        color:#0d6efd;
+        font-size:55px;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        margin:0 auto 20px;
+        border:5px solid rgba(255,255,255,.4);
+    }
+
+    .profile-header h2{
+        margin-bottom:8px;
+        font-size:30px;
+    }
+
+    .profile-header p{
+        font-size:16px;
+        opacity:.9;
+    }
+
+    .profile-body{
+        padding:35px;
+    }
+
+    .profile-info{
+        display:grid;
+        grid-template-columns:180px 1fr;
+        padding:16px 0;
+        border-bottom:1px solid #eee;
+    }
+
+    .profile-info:last-child{
+        border-bottom:none;
+    }
+
+    .label{
+        font-weight:bold;
+        color:#333;
+    }
+
+    .value{
+        color:#555;
+        line-height:1.6;
+    }
+
+    .buttons{
+        margin-top:35px;
+        display:flex;
+        gap:15px;
+    }
+
+    .btn{
+        text-decoration:none;
+        padding:12px 22px;
+        border-radius:8px;
+        font-weight:bold;
+        transition:.3s;
+    }
+
+    .edit-btn{
+        background:#198754;
+        color:white;
+    }
+
+    .edit-btn:hover{
+        background:#157347;
+    }
+
+    .dashboard-btn{
+        background:#6c757d;
+        color:white;
+    }
+
+    .dashboard-btn:hover{
+        background:#565e64;
+    }
+
+    @media(max-width:700px){
+
+        .profile-info{
+            grid-template-columns:1fr;
+            gap:8px;
+        }
+
+        .buttons{
+            flex-direction:column;
+        }
+
+    }
+
+</style>
+
+<div class="container">
+
+    <div class="profile-card">
+
+        <div class="profile-header">
+            {% if profile.profile_picture  %}
+                <img class="profile-image" src="{{profile.profile_picture.url }}" alt="profile_picture">
+            {% else %}
+                <div class="profile-image">
+                    👤
+                </div>
+            {% endif %}
+            
+            <h2>{{request.user.username}}</h2>
+
+            {% comment %} <p>Python & Django Backend Developer</p> {% endcomment %}
+
+        </div>
+
+        <div class="profile-body">
+
+            <div class="profile-info">
+                <div class="label">Username</div>
+                <div class="value">{{request.user.username}}</div>
+            </div>
+
+            <div class="profile-info">
+                <div class="label">Email</div>
+                <div class="value">{{request.user.email}}</div>
+            </div>
+
+            <div class="profile-info">
+                <div class="label">Phone</div>
+                <div class="value">{{profile.phone|default:"Not provided"}}</div>
+            </div>
+
+            <div class="profile-info">
+                <div class="label">Address</div>
+                <div class="value">{{profile.address|default:"Not provided"}}</div>
+            </div>
+
+            <div class="profile-info">
+                <div class="label">Skills</div>
+                <div class="value">
+                    {{profile.skills|default:"Not provided"}}
+                </div>
+            </div>
+
+            <div class="profile-info">
+                <div class="label">Bio</div>
+                <div class="value">
+                    {{profile.bio|default:"Not provided"}}
+                </div>
+            </div>
+
+            <div class="profile-info">
+                <div class="label">Member Since</div>
+                <div class="value">{{profile.created|date:"F d, Y" }}</div>
+            </div>
+
+            <div class="buttons">
+                <a href="{% url 'edit_profile_view' %}" class="btn edit-btn">Edit Profile</a>
+                <a href="{% url 'dashboard_view' %}" class="btn dashboard-btn">Back to Dashboard</a>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

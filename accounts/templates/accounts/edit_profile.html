@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+
+<style>
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family:Arial, Helvetica, sans-serif;
+    }
+
+    body{
+        background:#f4f6f9;
+    }
+
+    .container{
+        max-width:700px;
+        margin:50px auto;
+        padding:20px;
+    }
+
+    .card{
+        background:#fff;
+        padding:35px;
+        border-radius:12px;
+        box-shadow:0 10px 25px rgba(0,0,0,.08);
+    }
+
+    h2{
+        text-align:center;
+        color:#333;
+        margin-bottom:10px;
+    }
+
+    .subtitle{
+        text-align:center;
+        color:#777;
+        margin-bottom:30px;
+        font-size:15px;
+    }
+
+    form{
+        display:flex;
+        flex-direction:column;
+        gap:18px;
+    }
+
+    .form-group{
+        display:flex;
+        flex-direction:column;
+    }
+
+    label{
+        margin-bottom:8px;
+        font-weight:bold;
+        color:#444;
+    }
+
+    input,
+    textarea,
+    select{
+        width:100%;
+        padding:12px;
+        border:1px solid #ccc;
+        border-radius:8px;
+        font-size:15px;
+        outline:none;
+        transition:.3s;
+    }
+
+    textarea{
+        resize:vertical;
+        min-height:120px;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus{
+        border-color:#0d6efd;
+        box-shadow:0 0 5px rgba(13,110,253,.25);
+    }
+
+    input[type="file"]{
+        padding:8px;
+    }
+
+    .helptext{
+        margin-top:5px;
+        font-size:13px;
+        color:#777;
+    }
+
+    .errorlist{
+        list-style:none;
+        color:#dc3545;
+        margin-top:5px;
+        font-size:14px;
+    }
+
+    .buttons{
+        display:flex;
+        gap:15px;
+        margin-top:10px;
+    }
+
+    .btn{
+        flex:1;
+        padding:12px;
+        border:none;
+        border-radius:8px;
+        text-decoration:none;
+        text-align:center;
+        font-size:16px;
+        font-weight:bold;
+        cursor:pointer;
+        transition:.3s;
+    }
+
+    .save-btn{
+        background:#198754;
+        color:#fff;
+    }
+
+    .save-btn:hover{
+        background:#157347;
+    }
+
+    .cancel-btn{
+        background:#6c757d;
+        color:#fff;
+    }
+
+    .cancel-btn:hover{
+        background:#5c636a;
+    }
+
+    @media(max-width:600px){
+
+        .card{
+            padding:25px;
+        }
+
+        .buttons{
+            flex-direction:column;
+        }
+
+    }
+
+</style>
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>Edit Profile</h2>
+
+        <p class="subtitle">
+            Update your personal information below.
+        </p>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            {% for field in form %}
+
+                <div class="form-group">
+
+                    {{ field.label_tag }}
+
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <small class="helptext">
+                            {{ field.help_text }}
+                        </small>
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                        <div class="errorlist">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+            {% endfor %}
+
+            <div class="buttons">
+
+                <button type="submit" class="btn save-btn">
+                    Save Changes
+                </button>
+
+                <a href="{% url 'profile_view' %}" class="btn cancel-btn">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

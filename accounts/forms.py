@@ -2,6 +2,7 @@ from .models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
+from .models import Profile
 
 
 class RegistrationForm(UserCreationForm):
@@ -36,3 +37,9 @@ class LoginForm(AuthenticationForm):
 
         for field in self.fields.values():
             field.widget.attrs["class"] = "form-control"
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ["skills", "profile_picture", "phone", "address", "bio"]

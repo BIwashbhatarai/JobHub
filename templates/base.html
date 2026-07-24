@@ -101,14 +101,15 @@
 <nav>
 
     <div class="logo">
-        <a href="#">💼 JobHub</a>
+        <a href="#">JobHub</a>
     </div>
 
     <ul>
         {% if user.is_authenticated  %}
-            <li><a href="{% url 'logout_view' %}">Logout</a></li>
-            <li><a href="#">Dashboard</a></li>
             <span>Welcome, {{user.username}}</span>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="{% url 'logout_view' %}">Logout</a></li>
+            
         {% else %}
             <li><a href="{% url 'home' %}">Home</a></li>
             <li><a href="{% url 'login_view' %}">Login</a></li>
