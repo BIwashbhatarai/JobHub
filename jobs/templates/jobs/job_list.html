@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    body {
+        background: #f5f7fa;
+    }
+
+    .job-list-container {
+        max-width: 1000px;
+        margin: 50px auto;
+    }
+
+    .page-title {
+        text-align: center;
+        margin-bottom: 30px;
+        font-weight: 700;
+    }
+
+    .job-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        transition: 0.3s;
+    }
+
+    .job-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .job-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .job-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #0d6efd;
+        margin: 0;
+    }
+
+    .job-type {
+        background: #0d6efd;
+        color: white;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 14px;
+    }
+
+    .job-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .job-info p {
+        margin: 0;
+        color: #555;
+    }
+
+    .job-description {
+        color: #666;
+        line-height: 1.7;
+        margin-bottom: 20px;
+    }
+
+    .job-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid #eee;
+        padding-top: 18px;
+    }
+
+    .dates p {
+        margin: 5px 0;
+    }
+
+    .deadline {
+        color: #dc3545;
+        font-weight: 600;
+    }
+
+    .btn-view {
+        text-decoration: none;
+        background: #0d6efd;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        transition: 0.3s;
+    }
+
+    .btn-view:hover {
+        background: #0b5ed7;
+        color: white;
+    }
+
+    .empty {
+        text-align: center;
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0,0,0,.08);
+    }
+
+    @media (max-width: 768px) {
+
+        .job-header,
+        .job-footer {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .job-info {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="container job-list-container">
+
+    <h2 class="page-title">Available Jobs</h2>
+
+    {% if jobs %}
+
+        {% for job in jobs %}
+
+        <div class="job-card">
+
+            <div class="job-header">
+                <h3 class="job-title">{{ job.title }}</h3>
+
+                <span class="job-type">
+                    {{ job.get_job_type_display }}
+                </span>
+            </div>
+
+            <div class="job-info">
+                <p><strong>Company:</strong> {{ job.company_name }}</p>
+                <p><strong>Recruiter:</strong> {{ job.recruiter.get_full_name|default:job.recruiter.username }}</p>
+                <p><strong>Location:</strong> {{ job.location }}</p>
+                {% if job.salary %}
+                    <p><strong>Salary:</strong> {{ job.salary }}</p>
+                {% else %}
+                    <p><strong>Salary:</strong>Negotiable</p>
+                {% endif %}
+                <p><strong>Experience:</strong> {{ job.get_experience_level_display }}</p>
+            </div>
+
+            <div class="job-description">
+                {{ job.description|truncatewords:35 }}
+            </div>
+
+            <div class="job-footer">
+
+                <div class="dates">
+                    <p>
+                        <strong>Posted:</strong>
+                        {{ job.created_at|date:"F d, Y" }}
+                    </p>
+
+                    <p class="deadline">
+                        <strong>Deadline:</strong>
+                        {{ job.application_deadline|date:"F d, Y" }}
+                    </p>
+                </div>
+
+                <a href="{% url 'job_detail_view' job.pk %}" class="btn-view">
+                    View Details
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty">
+            <h4>No Jobs Available</h4>
+            <p>There are currently no job openings.</p>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

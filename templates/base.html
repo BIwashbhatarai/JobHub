@@ -101,21 +101,101 @@
 <nav>
 
     <div class="logo">
-        <a href="#">JobHub</a>
+        <a href="{% url 'home' %}">JobHub</a>
     </div>
 
-    <ul>
-        {% if user.is_authenticated  %}
-            <span>Welcome, {{user.username}}</span>
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="{% url 'logout_view' %}">Logout</a></li>
-            
-        {% else %}
-            <li><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="{% url 'login_view' %}">Login</a></li>
-            <li><a href="{% url 'register_view' %}">Register</a></li>
-        {% endif %}
-    </ul>
+   <ul>
+
+{% if user.is_authenticated %}
+
+    <span>
+        Welcome, {{ user.username }}
+    </span>
+
+    <li>
+        <a href="{% url 'dashboard_view' %}">
+            Dashboard
+        </a>
+    </li>
+
+
+    <!-- Common for everyone -->
+    <li>
+        <a href="{% url 'job_list_view' %}">
+            Jobs
+        </a>
+    </li>
+
+
+    <!-- Recruiter Navigation -->
+    {% if user.role == "RECRUITER" %}
+
+        <li>
+            <a href="{% url 'create_job_view' %}">
+                Create Job
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'my_job_view' %}">
+                My Jobs
+            </a>
+        </li>
+
+    {% endif %}
+
+
+
+    <!-- Job Seeker Navigation -->
+    {% if user.role == "JOB_SEEKER" %}
+
+        <li>
+            <a href="#">
+                My Applications
+            </a>
+        </li>
+
+    {% endif %}
+
+
+    <li>
+        <a href="{% url 'profile_view' %}">
+            Profile
+        </a>
+    </li>
+
+
+    <li>
+        <a href="{% url 'logout_view' %}">
+            Logout
+        </a>
+    </li>
+
+
+{% else %}
+
+    <li>
+        <a href="{% url 'home' %}">
+            Home
+        </a>
+    </li>
+
+    <li>
+        <a href="{% url 'login_view' %}">
+            Login
+        </a>
+    </li>
+
+    <li>
+        <a href="{% url 'register_view' %}">
+            Register
+        </a>
+    </li>
+
+
+{% endif %}
+
+</ul>
 
 </nav>
 

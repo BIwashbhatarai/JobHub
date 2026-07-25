@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    body {
+        background: #f5f7fa;
+    }
+
+    .job-form-container {
+        max-width: 800px;
+        margin: 50px auto;
+    }
+
+    .job-form-card {
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .job-form-card h2 {
+        text-align: center;
+        font-weight: 700;
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .form-control {
+        width: 100%;
+        border-radius: 8px;
+        padding: 10px 14px;
+        border: 1px solid #ced4da;
+        transition: .3s;
+    }
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 .2rem rgba(13,110,253,.15);
+        outline: none;
+    }
+
+    textarea.form-control {
+        min-height: 140px;
+        resize: vertical;
+    }
+
+    select.form-control {
+        cursor: pointer;
+    }
+
+    .text-danger {
+        color: #dc3545;
+        font-size: 0.9rem;
+        margin-top: 5px;
+    }
+
+    .text-danger ul {
+        margin: 0;
+        padding-left: 18px;
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: #0d6efd;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        transition: .3s;
+    }
+
+    .btn-submit:hover {
+        background: #0b5ed7;
+    }
+</style>
+
+<div class="container job-form-container">
+    <div class="job-form-card">
+
+        <h2>Create Job</h2>
+
+        <form method="POST" action="">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <small class="text-muted">
+                            {{ field.help_text }}
+                        </small>
+                    {% endif %}
+
+                    <div class="text-danger">
+                        {{ field.errors }}
+                    </div>
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn-submit">
+                Create Job
+            </button>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

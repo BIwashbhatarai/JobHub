@@ -3,7 +3,15 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    pass
+    ROLES = (
+        ("JOB_SEEKER", "JOB_SEEKER"),
+        ("RECRUITER", "RECRUITER"),
+    )
+    role = models.CharField(
+        max_length=20,
+        choices=ROLES,
+        default="JOB_SEEKER",
+    )
 
 
 class Profile(models.Model):
