@@ -230,15 +230,15 @@
 
         <div class="footer">
 
-            <a href="{% url 'job_list_view' %}" class="btn-back">
+            <a href="{% url 'jobs:job_list_view' %}" class="btn-back">
                 ← Back to Jobs
             </a>
 
             
 
-            {% if request.user.role == "JOB_SEEKER" %}
+            {% if request.user.is_authenticated and request.user.role == "JOB_SEEKER" and not applied %}
             
-                <a href="#" class="btn-apply">
+                <a href="{% url 'application:apply_view' job.id %}" class="btn-apply">
                     Apply Now
                 </a>
             {% endif %}

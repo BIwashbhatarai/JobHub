@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Job Applicants{% endblock %}
+
+{% block content %}
+
+<style>
+    body{
+        background:#f5f7fa;
+    }
+
+    .container{
+        max-width:1000px;
+        margin:50px auto;
+    }
+
+    .header{
+        background:#fff;
+        padding:30px;
+        border-radius:12px;
+        box-shadow:0 10px 25px rgba(0,0,0,.08);
+        margin-bottom:30px;
+    }
+
+    .header h2{
+        color:#0d6efd;
+        margin-bottom:10px;
+    }
+
+    .header p{
+        color:#555;
+        margin:8px 0;
+        font-size:17px;
+    }
+
+    .count{
+        display:inline-block;
+        margin-top:15px;
+        background:#198754;
+        color:#fff;
+        padding:8px 18px;
+        border-radius:20px;
+        font-weight:bold;
+    }
+
+    .applicant-card{
+        background:#fff;
+        border-radius:12px;
+        padding:25px;
+        margin-bottom:25px;
+        box-shadow:0 10px 25px rgba(0,0,0,.08);
+    }
+
+    .applicant-name{
+        font-size:24px;
+        font-weight:bold;
+        color:#0d6efd;
+        margin-bottom:20px;
+    }
+
+    .info p{
+        margin:10px 0;
+        color:#444;
+    }
+
+    .section-title{
+        font-size:18px;
+        font-weight:bold;
+        margin:20px 0 10px;
+        border-bottom:2px solid #eee;
+        padding-bottom:8px;
+    }
+
+    .cover-letter{
+        background:#f8f9fa;
+        border-left:4px solid #0d6efd;
+        padding:18px;
+        border-radius:8px;
+        line-height:1.7;
+        margin-bottom:20px;
+    }
+
+    .actions{
+        display:flex;
+        gap:10px;
+    }
+
+    .btn{
+        display:inline-block;
+        text-decoration:none;
+        color:#fff;
+        padding:10px 18px;
+        border-radius:8px;
+        font-weight:bold;
+    }
+
+    .btn-view{
+        background:#0d6efd;
+    }
+
+    .btn-download{
+        background:#198754;
+    }
+
+    .btn-view:hover{
+        background:#0b5ed7;
+    }
+
+    .btn-download:hover{
+        background:#157347;
+    }
+
+</style>
+
+<div class="container">
+
+    <div class="header">
+
+        <h2>{{job.title}}</h2>
+
+        <p><strong>Company:</strong> {{ job.company_name }}</p>
+
+        <span class="count">
+            Total Applicants: {{ applications|length }}
+        </span>
+
+    </div>
+
+
+    <!-- Applicant 1 -->
+
+    {% if applications %}
+
+    {% for application in applications %}
+
+    <div class="applicant-card">
+
+        <div class="applicant-name">
+            👤 {{ application.applicant.get_full_name|default:application.applicant.username }}
+        </div>
+
+        <div class="info">
+            <p><strong>Email:</strong> {{ application.applicant.email }}</p>
+            <p><strong>Phone:</strong> {{ application.applicant.profile.phone|default:"Not Provided" }}</p>
+            <p><strong>Applied:</strong> {{ application.applied_at|date:"F d, Y" }}</p>
+        </div>
+
+        <div class="section-title">
+            Cover Letter
+        </div>
+
+        <div class="cover-letter">
+            {{ application.cover_letter }}
+        </div>
+
+        <div class="actions">
+            {% if application.resume %}
+                <a href="{{ application.resume.url }}" target="_blank" class="btn btn-view">
+                    View Resume
+                </a>
+
+                <a href="{{ application.resume.url }}" download class="btn btn-download">
+                    Download Resume
+                </a>
+            {% else %}
+                <p>No resume uploaded.</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <div class="applicant-card text-center">
+        <div style="font-size:60px;">📭</div>
+
+        <h3 style="margin:15px 0;color:#333;">
+            No Applications Yet
+        </h3>
+
+        <p style="color:#666;font-size:17px;">
+            No candidates have applied for this job yet.
+            Once someone submits an application, it will appear here.
+        </p>
+    </div>
+
+{% endif %}
+
+
+</div>
+
+{% endblock %}

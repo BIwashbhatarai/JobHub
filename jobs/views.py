@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Job
 from django.utils import timezone
+from application.models import Application
 
 
 @login_required
@@ -16,7 +17,7 @@ def create_job_view(request):
             job.recruiter = request.user
             job.save()
             messages.success(request, "Job created successfully.")
-            return redirect("job_list_view")
+            return redirect("jobs:job_list_view")
 
         messages.error(
             request,
@@ -47,10 +48,18 @@ def job_list_view(request):
 @login_required
 def job_detail_view(request, pk):
     job = get_object_or_404(Job, pk=pk)
+    applied = Application.objects.filter(
+        applicant=request.user,
+        job=job,
+    ).exists()
+
     return render(
         request,
         "jobs/job_details.html",
-        {"job": job},
+        {
+            "job": job,
+            "applied": applied,
+        },
     )
 
 

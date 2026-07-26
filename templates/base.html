@@ -121,7 +121,7 @@
 
     <!-- Common for everyone -->
     <li>
-        <a href="{% url 'job_list_view' %}">
+        <a href="{% url 'jobs:job_list_view' %}">
             Jobs
         </a>
     </li>
@@ -131,13 +131,13 @@
     {% if user.role == "RECRUITER" %}
 
         <li>
-            <a href="{% url 'create_job_view' %}">
+            <a href="{% url 'jobs:create_job_view' %}">
                 Create Job
             </a>
         </li>
 
         <li>
-            <a href="{% url 'my_job_view' %}">
+            <a href="{% url 'jobs:my_job_view' %}">
                 My Jobs
             </a>
         </li>
@@ -150,7 +150,7 @@
     {% if user.role == "JOB_SEEKER" %}
 
         <li>
-            <a href="#">
+            <a href="{% url 'application:my_applicatios' %}">
                 My Applications
             </a>
         </li>

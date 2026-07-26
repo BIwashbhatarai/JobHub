@@ -144,6 +144,14 @@
         .btn{
             text-align:center;
         }
+        .btn-applicants {
+            background: #198754;
+        }
+
+        .btn-applicants:hover {
+            background: #157347;
+            color: white;
+        }
     }
 </style>
 
@@ -201,16 +209,19 @@
 
             <div class="actions">
 
-                <a href="{% url 'job_detail_view' job.pk %}" class="btn btn-view">
+                <a href="{% url 'jobs:job_detail_view' job.pk %}" class="btn btn-view">
                     View
                 </a>
 
-                <a href="{% url 'job_edit_view' job.pk %}" class="btn btn-edit">
+                <a href="{% url 'jobs:job_edit_view' job.pk %}" class="btn btn-edit">
                     Edit
                 </a>
 
-                <a href="{% url 'job_delete_view' job.pk %}" class="btn btn-delete">
+                <a href="{% url 'jobs:job_delete_view' job.pk %}" class="btn btn-delete">
                     Delete
+                </a>
+                <a href="{% url 'application:job_application_view' job.pk %}" class="btn btn-applicants">
+                    Applicants
                 </a>
 
             </div>
@@ -231,7 +242,7 @@
 
             <br>
 
-            <a href="{% url 'create_job_view' %}" class="btn btn-view">
+            <a href="{% url 'jobs:create_job_view' %}" class="btn btn-view">
                 + Create Your First Job
             </a>
 

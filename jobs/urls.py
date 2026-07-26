@@ -1,6 +1,9 @@
 from django.urls import path
 from .views import *
 
+app_name = "jobs"
+
+
 urlpatterns = [
     path("create/", create_job_view, name="create_job_view"),
     path("job-list/", job_list_view, name="job_list_view"),
