@@ -8,5 +8,5 @@ urlpatterns = [
     path(
         "job/<int:pk>/applications/", job_application_view, name="job_application_view"
     ),
-    path("my-applications/", my_applications, name="my_applicatios"),
+    path("my-applications/", my_applications, name="my_applications"),
 ]

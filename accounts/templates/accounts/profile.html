@@ -194,7 +194,11 @@
 
             <div class="buttons">
                 <a href="{% url 'edit_profile_view' %}" class="btn edit-btn">Edit Profile</a>
-                <a href="{% url 'dashboard_view' %}" class="btn dashboard-btn">Back to Dashboard</a>
+                {% if request.user.role == "RECRUITER" %}
+                <a href="{% url 'recruiter_dashboard_view' %}" class="btn dashboard-btn">Back to Dashboard</a>
+                {% else %}
+                <a href="{% url 'job_seeker_dashboard_view' %}" class="btn dashboard-btn">Back to Dashboard</a>
+                {% endif %}
             </div>
 
         </div>

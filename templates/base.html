@@ -108,55 +108,59 @@
 
 {% if user.is_authenticated %}
 
-    <span>
-        Welcome, {{ user.username }}
-    </span>
-
+{% if user.role == "RECRUITER" %}
     <li>
-        <a href="{% url 'dashboard_view' %}">
+        <a href="{% url 'recruiter_dashboard_view' %}">
             Dashboard
         </a>
+        
     </li>
-
-
-    <!-- Common for everyone -->
+    
     <li>
-        <a href="{% url 'jobs:job_list_view' %}">
-            Jobs
+        <a href="{% url 'jobs:my_job_view' %}">
+            My jobs
+        </a>
+    </li>
+    
+    <li>
+        <a href="{% url 'jobs:create_job_view' %}">
+            Create Job
         </a>
     </li>
 
+{% else %}
+    <li>
+        <a href="{% url 'job_seeker_dashboard_view' %}">
+            Dashboard
+        </a>
+        
+    </li>
+    
 
-    <!-- Recruiter Navigation -->
-    {% if user.role == "RECRUITER" %}
+{% endif %}
+
+{% if user.role == "JOB_SEEKER" %}
+
 
         <li>
-            <a href="{% url 'jobs:create_job_view' %}">
-                Create Job
+            <a href="{% url 'jobs:job_list_view' %}">
+                Browse Jobs
             </a>
         </li>
 
         <li>
-            <a href="{% url 'jobs:my_job_view' %}">
-                My Jobs
-            </a>
-        </li>
-
-    {% endif %}
-
-
-
-    <!-- Job Seeker Navigation -->
-    {% if user.role == "JOB_SEEKER" %}
-
-        <li>
-            <a href="{% url 'application:my_applicatios' %}">
+            <a href="{% url 'application:my_applications' %}">
                 My Applications
             </a>
         </li>
 
+
+
     {% endif %}
 
+    <!-- Common for everyone -->
+
+    <!-- Job Seeker Navigation -->
 
     <li>
         <a href="{% url 'profile_view' %}">

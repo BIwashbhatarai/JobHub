@@ -1,0 +1,1104 @@
+ {% extends "base.html" %}
+
+{% block title %}Recruiter Dashboard{% endblock %}
+
+{% block content %}
+
+<style>
+
+:root{
+
+    --primary:#2563eb;
+    --primary-dark:#1d4ed8;
+
+    --success:#10b981;
+    --danger:#ef4444;
+    --warning:#f59e0b;
+
+    --bg:#f8fafc;
+    --white:#ffffff;
+
+    --text:#0f172a;
+    --muted:#64748b;
+
+    --border:#e2e8f0;
+
+    --shadow:
+        0 10px 30px rgba(15,23,42,.05);
+
+    --shadow-hover:
+        0 18px 40px rgba(15,23,42,.10);
+
+}
+
+body{
+
+    background:var(--bg);
+    font-family:'Inter',sans-serif;
+    color:var(--text);
+
+}
+
+
+/* ===========================
+        Dashboard
+=========================== */
+
+.recruiter-dashboard{
+
+    max-width:1400px;
+
+}
+
+
+/* ===========================
+          Header
+=========================== */
+
+.dashboard-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding-bottom:30px;
+    margin-bottom:35px;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+.dashboard-badge{
+
+    display:inline-block;
+
+    padding:6px 14px;
+
+    background:#dbeafe;
+
+    color:var(--primary);
+
+    font-size:12px;
+    font-weight:700;
+
+    border-radius:30px;
+
+    margin-bottom:15px;
+
+    letter-spacing:.4px;
+
+    text-transform:uppercase;
+
+}
+
+.dashboard-title{
+
+    font-size:2rem;
+
+    font-weight:800;
+
+    color:var(--text);
+
+    margin-bottom:10px;
+
+}
+
+.dashboard-subtitle{
+
+    color:var(--muted);
+
+    font-size:15px;
+
+    margin:0;
+
+}
+
+.create-job-btn{
+
+    padding:12px 28px;
+
+    font-weight:600;
+
+    border-radius:12px;
+
+}
+
+
+/* ===========================
+      Statistics Cards
+=========================== */
+
+.dashboard-stats{
+
+    margin-bottom:40px;
+
+}
+
+.stat-card{
+
+    background:var(--white);
+
+    border-radius:18px;
+
+    padding:28px;
+
+    border:1px solid var(--border);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    box-shadow:var(--shadow);
+
+    transition:.25s;
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.stat-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:5px;
+
+    height:100%;
+
+    background:var(--primary);
+
+}
+
+.stat-card:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:var(--shadow-hover);
+
+}
+
+.stat-card-icon{
+
+    width:60px;
+    height:60px;
+
+    border-radius:16px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#dbeafe;
+
+    color:var(--primary);
+
+    font-size:22px;
+
+}
+
+.stat-card-icon.success{
+
+    background:#d1fae5;
+
+    color:var(--success);
+
+}
+
+.stat-card-icon.info{
+
+    background:#e0f2fe;
+
+    color:#0284c7;
+
+}
+
+.stat-card-content{
+
+    flex:1;
+
+    margin-left:18px;
+
+}
+
+.stat-title{
+
+    color:var(--muted);
+
+    font-size:13px;
+
+    font-weight:600;
+
+    text-transform:uppercase;
+
+    letter-spacing:.5px;
+
+    margin-bottom:6px;
+
+}
+
+.stat-value{
+
+    font-size:34px;
+
+    font-weight:800;
+
+    margin:0;
+
+    color:var(--text);
+
+}
+
+
+/* ===========================
+      Dashboard Sections
+=========================== */
+
+.dashboard-section{
+
+    background:var(--white);
+
+    border-radius:18px;
+
+    border:1px solid var(--border);
+
+    padding:30px;
+
+    margin-bottom:35px;
+
+    box-shadow:var(--shadow);
+
+}
+
+
+/* ===========================
+      Section Header
+=========================== */
+
+.section-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+
+}
+
+.section-title{
+
+    font-size:22px;
+
+    font-weight:700;
+
+    margin-bottom:5px;
+
+}
+
+.section-subtitle{
+
+    color:var(--muted);
+
+    font-size:14px;
+
+    margin:0;
+
+}
+
+
+/* ===========================
+      Quick Actions
+=========================== */
+
+.action-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    background:var(--white);
+
+    border:1px solid var(--border);
+
+    border-radius:16px;
+
+    padding:22px;
+
+    text-decoration:none;
+
+    transition:.25s;
+
+    color:inherit;
+
+    height:100%;
+
+}
+
+.action-card:hover{
+
+    transform:translateY(-5px);
+
+    border-color:var(--primary);
+
+    box-shadow:var(--shadow-hover);
+
+    color:inherit;
+
+}
+
+.action-icon{
+
+    width:60px;
+    height:60px;
+
+    border-radius:15px;
+
+    background:#dbeafe;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:var(--primary);
+
+    font-size:22px;
+
+}
+
+.action-content h5{
+
+    margin-bottom:6px;
+
+    font-size:18px;
+
+    font-weight:700;
+
+}
+
+.action-content p{
+
+    margin:0;
+
+    color:var(--muted);
+
+    font-size:14px;
+
+}
+
+
+/* ===========================
+          Table
+=========================== */
+
+.jobs-table{
+
+    margin:0;
+
+}
+
+.jobs-table thead th{
+
+    border:none;
+
+    color:var(--muted);
+
+    font-size:13px;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    padding-bottom:18px;
+
+}
+
+.jobs-table tbody td{
+
+    padding:20px 10px;
+
+    vertical-align:middle;
+
+    border-top:1px solid #edf2f7;
+
+}
+
+.jobs-table tbody tr{
+
+    transition:.2s;
+
+}
+
+.jobs-table tbody tr:hover{
+
+    background:#f8fbff;
+
+}
+
+
+/* ===========================
+          Job Info
+=========================== */
+
+.job-info{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.job-avatar{
+
+    width:50px;
+    height:50px;
+
+    border-radius:14px;
+
+    background:#dbeafe;
+
+    color:var(--primary);
+
+    font-weight:700;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:18px;
+
+}
+
+.job-title{
+
+    margin-bottom:4px;
+
+    font-weight:700;
+
+    font-size:15px;
+
+}
+
+.job-company{
+
+    color:var(--muted);
+
+    font-size:13px;
+
+}
+
+
+/* ===========================
+        Status Badge
+=========================== */
+
+.status-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:7px 15px;
+
+    border-radius:30px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+.status-badge.active{
+
+    background:#dcfce7;
+
+    color:var(--success);
+
+}
+
+.status-badge.inactive{
+
+    background:#f1f5f9;
+
+    color:#64748b;
+
+}
+
+
+/* ===========================
+      Table Buttons
+=========================== */
+
+.table-actions{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:8px;
+
+}
+
+.table-actions .btn{
+
+    border-radius:10px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    padding:6px 14px;
+
+}
+
+
+/* ===========================
+          Buttons
+=========================== */
+
+.btn{
+
+    transition:.25s;
+
+}
+
+.btn-primary{
+
+    background:var(--primary);
+
+    border-color:var(--primary);
+
+}
+
+.btn-primary:hover{
+
+    background:var(--primary-dark);
+
+    border-color:var(--primary-dark);
+
+}
+
+.btn-outline-primary:hover{
+
+    background:var(--primary);
+
+}
+
+.btn-success{
+
+    background:var(--success);
+
+    border-color:var(--success);
+
+}
+
+
+/* ===========================
+        Empty State
+=========================== */
+
+.empty-state{
+
+    text-align:center;
+
+    padding:80px 20px;
+
+}
+
+.empty-icon{
+
+    width:90px;
+
+    height:90px;
+
+    margin:auto;
+
+    border-radius:50%;
+
+    background:#dbeafe;
+
+    color:var(--primary);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:40px;
+
+    margin-bottom:25px;
+
+}
+
+.empty-state h4{
+
+    font-weight:700;
+
+    margin-bottom:10px;
+
+}
+
+.empty-state p{
+
+    color:var(--muted);
+
+    max-width:420px;
+
+    margin:0 auto 25px;
+
+}
+
+
+/* ===========================
+        Responsive
+=========================== */
+
+@media(max-width:992px){
+
+.dashboard-header{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:20px;
+
+}
+
+.dashboard-header-action{
+
+    width:100%;
+
+}
+
+.create-job-btn{
+
+    width:100%;
+
+}
+
+.section-header{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:15px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.dashboard-section{
+
+    padding:20px;
+
+}
+
+.stat-card{
+
+    padding:22px;
+
+}
+
+.stat-value{
+
+    font-size:28px;
+
+}
+
+.table-actions{
+
+    flex-direction:column;
+
+}
+
+.table-actions .btn{
+
+    width:100%;
+
+}
+
+.jobs-table{
+
+    min-width:950px;
+
+}
+
+}
+
+</style>
+
+<div class="container py-5 recruiter-dashboard">
+
+    <!-- ================= Header ================= -->
+
+    <div class="dashboard-header">
+
+        <div class="dashboard-header-content">
+
+            <span class="dashboard-badge">
+                Recruiter Dashboard
+            </span>
+
+            <h1 class="dashboard-title">
+                Welcome back, {{ request.user.first_name|default:request.user.username}} 👋
+            </h1>
+
+            <p class="dashboard-subtitle">
+                Manage your job postings and track applications from one place.
+            </p>
+
+        </div>
+
+        <div class="dashboard-header-action">
+
+            <a href="{% url 'jobs:create_job_view' %}" class="btn btn-primary create-job-btn">
+
+                <i class="bi bi-plus-circle me-2"></i>
+
+                Create Job
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================= Statistics ================= -->
+
+    <div class="row g-4 dashboard-stats">
+
+        <div class="col-lg-4">
+
+            <div class="stat-card">
+
+                <div class="stat-card-icon">
+                    <i class="bi bi-briefcase-fill"></i>
+                </div>
+
+                <div class="stat-card-content">
+
+                    <p class="stat-title">
+                        Jobs Posted
+                    </p>
+
+                    <h2 class="stat-value">
+                        {{total_jobs}}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="stat-card">
+
+                <div class="stat-card-icon success">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+
+                <div class="stat-card-content">
+
+                    <p class="stat-title">
+                        Active Jobs
+                    </p>
+
+                    <h2 class="stat-value">
+                        {{active_jobs}}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="stat-card">
+
+                <div class="stat-card-icon info">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+
+                <div class="stat-card-content">
+
+                    <p class="stat-title">
+                        Total Applicants
+                    </p>
+
+                    <h2 class="stat-value">
+                        {{total_applicants}}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================= Quick Actions ================= -->
+
+    <div class="dashboard-section quick-actions-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <h3 class="section-title">
+                    Quick Actions
+                </h3>
+
+                <p class="section-subtitle">
+                    Everything you need to manage your jobs.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="row g-3">
+
+            <div class="col-lg-4">
+
+                <a href="{% url 'jobs:create_job_view' %}" class="action-card">
+
+                    <div class="action-icon">
+                        <i class="bi bi-plus-circle"></i>
+                    </div>
+
+                    <div class="action-content">
+
+                        <h5>Create Job</h5>
+
+                        <p>Post a new job opening.</p>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+            <div class="col-lg-4">
+
+                <a href="{% url 'jobs:my_job_view' %}" class="action-card">
+
+                    <div class="action-icon">
+                        <i class="bi bi-briefcase"></i>
+                    </div>
+
+                    <div class="action-content">
+
+                        <h5>My Jobs</h5>
+
+                        <p>View all your job postings.</p>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+            <div class="col-lg-4">
+
+                <a href="{% url 'jobs:job_list_view' %}" class="action-card">
+
+                    <div class="action-icon">
+                        <i class="bi bi-search"></i>
+                    </div>
+
+                    <div class="action-content">
+
+                        <h5>Browse Jobs</h5>
+
+                        <p>See available jobs on JobHub.</p>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================= Recent Jobs ================= -->
+
+    <div class="dashboard-section jobs-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <h3 class="section-title">
+                    Recent Jobs
+                </h3>
+
+                <p class="section-subtitle">
+                    Manage your latest job postings.
+                </p>
+
+            </div>
+
+            <a href="{% url 'jobs:my_job_view' %}" class="btn btn-outline-primary">
+
+                View All
+
+            </a>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table jobs-table align-middle">
+
+                <thead>
+
+                <tr>
+
+                    <th>Job</th>
+                    <th>Location</th>
+                    <th>Type</th>
+                    {% comment %} <th>Status</th> {% endcomment %}
+                    <th>Applicants</th>
+                    <th>Posted</th>
+                    <th>Actions</th>
+
+                </tr>
+
+                </thead>
+
+                {% for job in jobs %}
+
+                <tbody>
+
+                <tr>
+
+                    <td>
+
+                        <div class="job-info">
+
+                            <div class="job-avatar">
+                                P
+                            </div>
+
+                            <div>
+
+                                <h6 class="job-title">
+                                    {{job.title}}
+                                </h6>
+
+                                <span class="job-company">
+                                    {{job.company_name}}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                    <td>{{job.location}}</td>
+
+                    <td>{{job.get_job_type_display}}</td>
+
+                    <td>{{job.applications.count}}</td>
+
+                    <td>{{job.created_at|timesince}} ago</td>
+
+                    <td>
+
+                        <div class="table-actions">
+
+                            <a href="{% url 'jobs:job_detail_view' job.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+
+                            <a href="{% url 'jobs:job_edit_view' job.pk %}" class="btn btn-sm btn-outline-warning">Edit</a>
+
+                            <a href="{% url 'jobs:job_delete_view' job.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+
+                            <a href="{% url 'application:job_application_view' job.pk %}" class="btn btn-sm btn-success">Applicants</a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="7">
+
+                        <div class="empty-state">
+
+                            <div class="empty-icon">
+                                <i class="bi bi-briefcase"></i>
+                            </div>
+
+                            <h4>No jobs posted yet</h4>
+
+                            <p>
+                                You haven't posted any jobs yet. Start hiring by creating your first job posting.
+                            </p>
+
+                            <a href="{% url 'jobs:create_job_view' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-2"></i>
+                                Create Your First Job
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+
+                </tbody>
+                {% endfor %}
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
