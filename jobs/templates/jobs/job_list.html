@@ -10,14 +10,80 @@
     .job-list-container {
         max-width: 1000px;
         margin: 50px auto;
+        padding: 0 15px;
     }
 
     .page-title {
         text-align: center;
         margin-bottom: 30px;
         font-weight: 700;
+        color: #333;
     }
 
+    /* --- Search & Filter UI --- */
+    .search-container {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .search-form {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .search-input {
+        flex: 2;
+        min-width: 200px;
+        padding: 12px 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        font-size: 15px;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    .search-select {
+        flex: 1;
+        min-width: 140px;
+        padding: 12px 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        font-size: 15px;
+        outline: none;
+        background-color: #fff;
+        cursor: pointer;
+        transition: border-color 0.3s;
+    }
+
+    .search-input:focus,
+    .search-select:focus {
+        border-color: #0d6efd;
+    }
+
+    .btn-search {
+        background: #0d6efd;
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        min-width: 120px;
+    }
+
+    .btn-search:hover {
+        background: #0b5ed7;
+        transform: translateY(-2px);
+    }
+
+    /* --- Job Cards --- */
     .job-card {
         background: #fff;
         border-radius: 12px;
@@ -95,6 +161,7 @@
         padding: 10px 20px;
         border-radius: 8px;
         transition: 0.3s;
+        font-weight: 500;
     }
 
     .btn-view:hover {
@@ -110,7 +177,16 @@
         box-shadow: 0 10px 25px rgba(0,0,0,.08);
     }
 
+    /* --- Responsive Adjustments --- */
     @media (max-width: 768px) {
+        .search-form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-search {
+            width: 100%;
+        }
 
         .job-header,
         .job-footer {
@@ -128,6 +204,56 @@
 <div class="container job-list-container">
 
     <h2 class="page-title">Available Jobs</h2>
+
+    <!-- Search and Filter UI -->
+    <div class="search-container">
+        <form method="GET" id="searchForm" action="" class="search-form">
+            
+            <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search Jobs..." class="search-input">
+            
+           <select name="job_type" class="search-select">
+            <option value="">Job Type</option>
+
+            <option value="FULL_TIME"
+                {% if request.GET.job_type == "FULL_TIME" %}selected{% endif %}>
+                Full Time
+            </option>
+
+            <option value="PART_TIME"
+                {% if request.GET.job_type == "PART_TIME" %}selected{% endif %}>
+                Part Time
+            </option>
+
+            <option value="INTERNSHIP"
+                {% if request.GET.job_type == "INTERNSHIP" %}selected{% endif %}>
+                Internship
+            </option>
+
+            <option value="CONTRACT"
+                {% if request.GET.job_type == "CONTRACT" %}selected{% endif %}>
+                Contract
+            </option>
+        </select>
+            
+            <select name="experience" class="search-select">
+                <option value="">Experience</option>
+                <option value="ENTRY_LEVEL" {% if request.GET.experience == "ENTRY_LEVEL"%} selected {% endif %}>Entry Level</option>
+                <option value="MID_LEVEL" {% if request.GET.experience == 'MID_LEVEL' %}selected{% endif %}>Mid Level</option>
+                <option value="SENIOR_LEVEL" {% if request.GET.experience == 'SENIOR_LEVEL' %}selected{% endif %}>Senior Level</option>
+            </select>
+            
+            <select name="sort" class="search-select">
+                <option value="">Sort</option>
+                <option value="newest" {% if request.GET.sort == 'newest' %} selected {% endif %}>Newest First</option>
+                <option value="oldest" {% if request.GET.sort == 'oldest' %} selected {% endif %}>Oldest First</option>
+                <option value="salary_low" {% if request.GET.sort == 'salary_low' %} selected {% endif %}>Salary Low</option>
+                <option value="salary_high" {% if request.GET.sort == 'salary_high' %} selected {% endif %}>Salary High</option>
+                {% comment %} <option value="application_deadline" {% if request.GET.sort == 'application_deadline' %}selected{% endif %}>Ending Soon</option> {% endcomment %}
+            </select>
+
+            <button type="submit" class="btn-search">Search</button>
+        </form>
+    </div>
 
     {% if jobs %}
 
@@ -150,7 +276,7 @@
                 {% if job.salary %}
                     <p><strong>Salary:</strong> {{ job.salary }}</p>
                 {% else %}
-                    <p><strong>Salary:</strong>Negotiable</p>
+                    <p><strong>Salary:</strong> Negotiable</p>
                 {% endif %}
                 <p><strong>Experience:</strong> {{ job.get_experience_level_display }}</p>
             </div>
@@ -186,12 +312,74 @@
     {% else %}
 
         <div class="empty">
-            <h4>No Jobs Available</h4>
-            <p>There are currently no job openings.</p>
+            <h4>No Jobs Found</h4>
+            <p>We couldn't find any jobs matching your criteria.</p>
         </div>
+
+    {% endif %}
+
+    {% if jobs.has_other_pages %}
+
+    <nav class="mt-4">
+
+        <ul class="pagination justify-content-center">
+
+            {% if jobs.has_previous %}
+            <li class="page-item">
+                <a class="page-link"
+                href="?page={{ jobs.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.job_type %}&job_type={{ request.GET.job_type }}{% endif %}{% if request.GET.experience %}&experience={{ request.GET.experience }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                    Previous
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in jobs.paginator.page_range %}
+
+                {% if jobs.number == num %}
+
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+
+                {% else %}
+
+                    <li class="page-item">
+                        <a class="page-link"
+                        href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.job_type %}&job_type={{ request.GET.job_type }}{% endif %}{% if request.GET.experience %}&experience={{ request.GET.experience }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                            {{ num }}
+                        </a>
+                    </li>
+
+                {% endif %}
+
+            {% endfor %}
+
+            {% if jobs.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                href="?page={{ jobs.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.job_type %}&job_type={{ request.GET.job_type }}{% endif %}{% if request.GET.experience %}&experience={{ request.GET.experience }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                    Next
+                </a>
+            </li>
+            {% endif %}
+
+        </ul>
+
+    </nav>
 
     {% endif %}
 
 </div>
 
+<script>
+document.getElementById("searchForm").addEventListener("submit", function () {
+    this.querySelectorAll("input, select").forEach(field => {
+        if (!field.value) {
+            field.removeAttribute("name");
+        }
+    });
+});
+</script>
+
 {% endblock %}
+

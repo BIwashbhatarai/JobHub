@@ -22,3 +22,12 @@ class Profile(models.Model):
     address = models.CharField(max_length=255, blank=True)
     bio = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
+
+
+class RecruiterProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_picture = models.ImageField(upload_to="profile/", blank=True, null=True)
+    phone = models.CharField(max_length=15, blank=True)
+    address = models.CharField(max_length=255, blank=True)
+    bio = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True)

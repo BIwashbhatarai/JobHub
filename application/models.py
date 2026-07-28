@@ -6,6 +6,11 @@ User = get_user_model()
 
 
 class Application(models.Model):
+    STATUS_CHOICES = (
+        ("PENDING", "Pending"),
+        ("ACCEPTED", "Accepted"),
+        ("REJECTED", "Rejected"),
+    )
 
     job = models.ForeignKey(
         Job,
@@ -23,6 +28,12 @@ class Application(models.Model):
         upload_to="resume/",
         blank=True,
         null=True,
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="PENDING",
     )
 
     cover_letter = models.TextField(blank=True)

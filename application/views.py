@@ -5,6 +5,8 @@ from .forms import ApplicationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Application
+from django.core.paginator import Paginator
+from django.http import HttpResponseForbidden
 
 
 @login_required
@@ -98,8 +100,35 @@ def my_applications(request):
         .filter(applicant=request.user)
         .order_by("-applied_at")
     )
+
     return render(
         request,
         "application/my_applications.html",
         {"applications": applications},
     )
+
+
+@login_required
+def accept_application(request, pk):
+    application = get_object_or_404(Application, pk=pk)
+
+    if application.job.recruiter != request.user:
+        return HttpResponseForbidden()
+
+    application.status = "ACCEPTED"
+    application.save()
+
+    return redirect("recruiter_dashboard_view")
+
+
+@login_required
+def reject_application(request, pk):
+    application = get_object_or_404(Application, pk=pk)
+
+    if application.job.recruiter != request.user:
+        return HttpResponseForbidden()
+
+    application.status = "REJECTED"
+    application.save()
+
+    return redirect("recruiter_dashboard_view")

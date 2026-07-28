@@ -109,6 +109,43 @@
     .btn-download:hover{
         background:#157347;
     }
+    .status-actions{
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    }
+
+    .btn-accept{
+        background:#198754;
+    }
+
+    .btn-accept:hover{
+        background:#157347;
+    }
+
+    .btn-reject{
+        background:#dc3545;
+    }
+
+    .btn-reject:hover{
+        background:#bb2d3b;
+    }
+
+    .status-badge{
+        padding:10px 16px;
+        border-radius:8px;
+        font-weight:bold;
+        color:#fff;
+    }
+
+    .status-badge.accepted{
+        background:#198754;
+    }
+
+    .status-badge.rejected{
+        background:#dc3545;
+    }
 
 </style>
 
@@ -154,6 +191,7 @@
         </div>
 
         <div class="actions">
+
             {% if application.resume %}
                 <a href="{{ application.resume.url }}" target="_blank" class="btn btn-view">
                     View Resume
@@ -162,9 +200,41 @@
                 <a href="{{ application.resume.url }}" download class="btn btn-download">
                     Download Resume
                 </a>
-            {% else %}
-                <p>No resume uploaded.</p>
             {% endif %}
+
+            <div class="status-actions">
+
+                {% if application.status == "PENDING" %}
+                    <a href="{% url 'application:accept_application' pk=application.id %}" class="btn btn-accept">
+                        Accept
+                    </a>
+
+                    <a href="{% url 'application:reject_application' pk=application.id}" class="btn btn-reject">
+                        Reject
+                    </a>
+
+                {% elif application.status == "ACCEPTED" %}
+                    <span class="status-badge accepted">
+                        ✓ Accepted
+                    </span>
+
+                    <a href="{% url 'application:reject_application' pk=application.id %}" class="btn btn-reject">
+                        Reject
+                    </a>
+
+                {% elif application.status == "REJECTED" %}
+                    <span class="status-badge rejected">
+                        ✗ Rejected
+                    </span>
+
+                    <a href="{% url 'application:accept_application' application.id %}" class="btn btn-accept">
+                        Accept
+                    </a>
+
+                {% endif %}
+
+            </div>
+
         </div>
 
     </div>

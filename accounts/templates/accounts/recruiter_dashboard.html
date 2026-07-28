@@ -866,7 +866,56 @@ body{
 
         </div>
 
+        <div class="col-lg-4">
+
+            <div class="stat-card">
+
+                <div class="stat-card-icon info">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+
+                <div class="stat-card-content">
+
+                    <p class="stat-title">
+                        Accepted Candidates
+                    </p>
+
+                    <h2 class="stat-value">
+                        {{accepted_candidates}}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+         <div class="col-lg-4">
+
+            <div class="stat-card">
+
+                <div class="stat-card-icon info">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+
+                <div class="stat-card-content">
+
+                    <p class="stat-title">
+                        Rejected Candidates
+                    </p>
+
+                    <h2 class="stat-value">
+                        {{rejected_candidates}}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
+    
 
 
 
@@ -1096,6 +1145,57 @@ body{
             </table>
 
         </div>
+        
+    {% if jobs.has_other_pages %}
+
+    <nav class="mt-4">
+
+        <ul class="pagination justify-content-center">
+
+            {% if jobs.has_previous %}
+            <li class="page-item">
+                <a class="page-link"
+                href="?page={{ jobs.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.job_type %}&job_type={{ request.GET.job_type }}{% endif %}{% if request.GET.experience %}&experience={{ request.GET.experience }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                    Previous
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in jobs.paginator.page_range %}
+
+                {% if jobs.number == num %}
+
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+
+                {% else %}
+
+                    <li class="page-item">
+                        <a class="page-link"
+                        href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.job_type %}&job_type={{ request.GET.job_type }}{% endif %}{% if request.GET.experience %}&experience={{ request.GET.experience }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                            {{ num }}
+                        </a>
+                    </li>
+
+                {% endif %}
+
+            {% endfor %}
+
+            {% if jobs.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                href="?page={{ jobs.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.job_type %}&job_type={{ request.GET.job_type }}{% endif %}{% if request.GET.experience %}&experience={{ request.GET.experience }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                    Next
+                </a>
+            </li>
+            {% endif %}
+
+        </ul>
+
+    </nav>
+
+    {% endif %}
 
     </div>
 

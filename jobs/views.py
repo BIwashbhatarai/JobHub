@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Job
 from django.utils import timezone
 from application.models import Application
+from django.db.models import Q
+from django.core.paginator import Paginator
 
 
 @login_required
@@ -34,14 +36,49 @@ def create_job_view(request):
 
 @login_required
 def job_list_view(request):
+    search = request.GET.get("q")
+    job_type = request.GET.get("job_type")
+    experience = request.GET.get("experience")
+    sort = request.GET.get("sort")
+
     jobs = Job.objects.filter(
         is_active=True,
         application_deadline__gte=timezone.now().date(),
     ).order_by("-created_at")
+
+    if search:
+        jobs = jobs.filter(
+            Q(title__icontains=search)
+            | Q(company_name__icontains=search)
+            | Q(location__icontains=search)
+        )
+
+    if job_type:
+        jobs = jobs.filter(job_type=job_type)
+
+    if experience:
+        jobs = jobs.filter(experience_level=experience)
+
+    if sort:
+        if sort == "oldest":
+            jobs = jobs.order_by("created_at")
+        elif sort == "newest":
+            jobs = jobs.order_by("-created_at")
+        elif sort == "salary_low":
+            jobs = jobs.order_by("salary")
+        elif sort == "salary_high":
+            jobs = jobs.order_by("-salary")
+
+    paginator = Paginator(jobs, 8)
+    page_number = request.GET.get("page")
+    jobs = paginator.get_page(page_number)
+
     return render(
         request,
         "jobs/job_list.html",
-        {"jobs": jobs},
+        {
+            "jobs": jobs,
+        },
     )
 
 
@@ -65,7 +102,13 @@ def job_detail_view(request, pk):
 
 @login_required
 def my_job_view(request):
-    jobs = Job.objects.filter(recruiter=request.user)
+    jobs = Job.objects.filter(
+        recruiter=request.user,
+    )
+
+    paginator = Paginator(jobs, 8)
+    page_number = request.GET.get("page")
+    jobs = paginator.get_page(page_number)
     return render(
         request,
         "jobs/my_job.html",

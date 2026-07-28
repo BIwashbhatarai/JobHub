@@ -792,6 +792,59 @@ body{
 
         </div>
 
+
+        <div class="col-lg-4">
+
+            <div class="stat-card">
+
+                <div class="stat-card-icon success">
+
+                    <i class="bi bi-briefcase-fill"></i>
+
+                </div>
+
+                <div class="stat-card-content">
+
+                    <p class="stat-title">
+                        Pending
+                    </p>
+
+                    <h2 class="stat-value">
+                        {{total_pending_jobs}}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="stat-card">
+
+                <div class="stat-card-icon success">
+
+                    <i class="bi bi-briefcase-fill"></i>
+
+                </div>
+
+                <div class="stat-card-content">
+
+                    <p class="stat-title">
+                        Accepted
+                    </p>
+
+                    <h2 class="stat-value">
+                        {{total_accepted_jobs}}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
 
@@ -881,7 +934,7 @@ body{
             </div>
 
 
-             <div class="col-lg-3">
+             {% comment %} <div class="col-lg-3">
 
                 <a href="#" class="action-card">
 
@@ -899,7 +952,7 @@ body{
 
                 </a>
 
-            </div> 
+            </div>  {% endcomment %}
 
         </div>
 

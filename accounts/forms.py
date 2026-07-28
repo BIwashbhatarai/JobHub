@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
 from .models import Profile
+from .models import RecruiterProfile
 
 
 class RegistrationForm(UserCreationForm):
@@ -44,3 +45,9 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ["skills", "profile_picture", "phone", "address", "bio"]
+
+
+class RecruiterProfileForm(forms.ModelForm):
+    class Meta:
+        model = RecruiterProfile
+        fields = ["profile_picture", "phone", "address", "bio"]
