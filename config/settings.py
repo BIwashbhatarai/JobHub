@@ -32,8 +32,12 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "jobhub-v2y0.onrender.com",
+    ".onrender.com",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://jobhub-v2y0.onrender.com",
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -124,8 +128,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
-
-STATIC_URL = "static/"
 
 
 AUTH_USER_MODEL = "accounts.User"
