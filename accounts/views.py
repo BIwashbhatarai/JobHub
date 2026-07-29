@@ -139,12 +139,15 @@ def recruiter_dashboard_view(request):
 
     active_jobs = Job.objects.filter(recruiter=request.user, is_active=True).count()
     total_applicants = Application.objects.filter(job__recruiter=request.user).count()
+
     accepted_candidates = Application.objects.filter(
-        status="ACCEPTED", recruiter=request.user
+        status="ACCEPTED", job__recruiter=request.user
     ).count()
+
     rejected_candidates = Application.objects.filter(
-        status="REJECTED", recruiter=request.user
+        status="REJECTED", job__recruiter=request.user
     ).count()
+
     jobs = (
         Job.objects.filter(
             recruiter=request.user,

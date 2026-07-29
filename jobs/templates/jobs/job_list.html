@@ -170,11 +170,40 @@
     }
 
     .empty {
+        background: #fff;
+        border-radius: 12px;
+        padding: 60px 30px;
         text-align: center;
-        background: white;
-        padding: 40px;
-        border-radius: 10px;
-        box-shadow: 0 10px 25px rgba(0,0,0,.08);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
+    }
+
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: #eef4ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .empty-icon i {
+        font-size: 36px;
+        color: #0d6efd;
+    }
+
+    .empty h3 {
+        font-weight: 700;
+        color: #212529;
+        margin-bottom: 12px;
+    }
+
+    .empty p {
+        color: #6c757d;
+        max-width: 500px;
+        margin: 0 auto;
+        line-height: 1.6;
     }
 
     /* --- Responsive Adjustments --- */
@@ -204,6 +233,7 @@
 <div class="container job-list-container">
 
     <h2 class="page-title">Available Jobs</h2>
+    {% if jobs %}
 
     <!-- Search and Filter UI -->
     <div class="search-container">
@@ -254,6 +284,7 @@
             <button type="submit" class="btn-search">Search</button>
         </form>
     </div>
+    {% endif %}
 
     {% if jobs %}
 
@@ -274,7 +305,7 @@
                 <p><strong>Recruiter:</strong> {{ job.recruiter.get_full_name|default:job.recruiter.username }}</p>
                 <p><strong>Location:</strong> {{ job.location }}</p>
                 {% if job.salary %}
-                    <p><strong>Salary:</strong> {{ job.salary }}</p>
+                    <p><strong>Salary:</strong> ${{ job.salary }}</p>
                 {% else %}
                     <p><strong>Salary:</strong> Negotiable</p>
                 {% endif %}
@@ -312,8 +343,20 @@
     {% else %}
 
         <div class="empty">
-            <h4>No Jobs Found</h4>
-            <p>We couldn't find any jobs matching your criteria.</p>
+            <div class="empty-icon">
+                <i class="bi bi-search"></i>
+            </div>
+
+            <h3>No Jobs Found</h3>
+
+            <p>
+                We couldn't find any jobs matching your search or filter criteria.
+                Try adjusting your filters or search with different keywords.
+            </p>
+
+            <a href="{% url 'jobs:job_list_view' %}" class="btn btn-primary mt-3">
+                View All Jobs
+            </a>
         </div>
 
     {% endif %}

@@ -172,13 +172,14 @@
                 <div class="label">Address</div>
                 <div class="value">{{profile.address|default:"Not provided"}}</div>
             </div>
-
+            {% if profile.user.role == 'JOB_SEEKER'%}
             <div class="profile-info">
                 <div class="label">Skills</div>
                 <div class="value">
                     {{profile.skills|default:"Not provided"}}
                 </div>
             </div>
+            {% endif %}
 
             <div class="profile-info">
                 <div class="label">Bio</div>

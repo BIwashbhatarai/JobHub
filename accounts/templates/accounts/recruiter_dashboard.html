@@ -129,9 +129,10 @@ body{
 =========================== */
 
 .dashboard-stats{
-
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:24px;
     margin-bottom:40px;
-
 }
 
 .stat-card{
@@ -141,6 +142,8 @@ body{
     border-radius:18px;
 
     padding:28px;
+
+    width: 100%;
 
     border:1px solid var(--border);
 
@@ -618,57 +621,78 @@ body{
 =========================== */
 
 .empty-state{
+    padding:70px 20px;
+    text-align:center;
+}
+
+.empty-state-icon{
+    width:90px;
+    height:90px;
+    margin:0 auto 24px;
+    border-radius:24px;
+    background:linear-gradient(135deg,#dbeafe,#eff6ff);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:var(--primary);
+    font-size:38px;
+    box-shadow:0 10px 30px rgba(37,99,235,.12);
+}
+.dashboard-empty{
+    width:100%;
+    min-height:420px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
 
     text-align:center;
 
-    padding:80px 20px;
+    border:2px dashed var(--border);
+    border-radius:18px;
 
+    background:#fbfdff;
+
+    padding:60px 40px;
 }
 
-.empty-icon{
-
+.dashboard-empty-icon{
     width:90px;
-
     height:90px;
 
-    margin:auto;
-
-    border-radius:50%;
-
-    background:#dbeafe;
-
-    color:var(--primary);
-
     display:flex;
-
     justify-content:center;
-
     align-items:center;
 
-    font-size:40px;
+    border-radius:20px;
+
+    background:#dbeafe;
+    color:var(--primary);
+
+    font-size:38px;
 
     margin-bottom:25px;
-
 }
 
-.empty-state h4{
-
+.dashboard-empty h3{
+    font-size:28px;
     font-weight:700;
-
-    margin-bottom:10px;
-
+    margin-bottom:12px;
 }
 
-.empty-state p{
-
+.dashboard-empty p{
+    max-width:550px;
     color:var(--muted);
-
-    max-width:420px;
-
-    margin:0 auto 25px;
-
+    line-height:1.7;
+    margin-bottom:30px;
 }
 
+.dashboard-empty .btn{
+    padding:12px 26px;
+    border-radius:12px;
+    font-weight:600;
+}
 
 /* ===========================
         Responsive
@@ -747,6 +771,10 @@ body{
     min-width:950px;
 
 }
+
+.dashboard-stats{
+        grid-template-columns:1fr;
+    }
 
 }
 
@@ -1032,6 +1060,7 @@ body{
             </a>
 
         </div>
+        {% if jobs %}
 
         <div class="table-responsive">
 
@@ -1053,10 +1082,10 @@ body{
 
                 </thead>
 
-                {% for job in jobs %}
+                
 
                 <tbody>
-
+                {% for job in jobs %}
                 <tr>
 
                     <td>
@@ -1108,43 +1137,42 @@ body{
                     </td>
 
                 </tr>
-
-                {% empty %}
-
-                <tr>
-
-                    <td colspan="7">
-
-                        <div class="empty-state">
-
-                            <div class="empty-icon">
-                                <i class="bi bi-briefcase"></i>
-                            </div>
-
-                            <h4>No jobs posted yet</h4>
-
-                            <p>
-                                You haven't posted any jobs yet. Start hiring by creating your first job posting.
-                            </p>
-
-                            <a href="{% url 'jobs:create_job_view' %}" class="btn btn-primary">
-                                <i class="bi bi-plus-circle me-2"></i>
-                                Create Your First Job
-                            </a>
-
-                        </div>
-
-                    </td>
-
-                </tr>
-
-
-                </tbody>
                 {% endfor %}
-
+                </tbody>
             </table>
+         </div>
 
-        </div>
+         {% else %}
+
+            <div class="dashboard-empty">
+
+                <div class="dashboard-empty-icon">
+                    <i class="bi bi-briefcase"></i>
+                </div>
+
+                <h3>No Jobs Yet</h3>
+
+                <p>
+                    You haven't published any jobs yet. Create your first job posting to start
+                    receiving applications from candidates.
+                </p>
+
+                <a href="{% url 'jobs:create_job_view' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Create Your First Job
+                </a>
+
+            </div>
+
+            {% endif %}
+
+
+                
+               
+
+            
+
+       
         
     {% if jobs.has_other_pages %}
 

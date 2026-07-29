@@ -128,7 +128,7 @@ def job_edit_view(request, pk):
                 request,
                 "Job updated successfully",
             )
-            return redirect("my_job_view")
+            return redirect("jobs:my_job_view")
         else:
             messages.success(
                 request,
@@ -149,7 +149,7 @@ def job_delete_view(request, pk):
     if request.method == "POST":
         job.delete()
         messages.success(request, "Job deleted successfully")
-        return redirect("my_job_view")
+        return redirect("jobs:my_job_view")
     return render(
         request,
         "jobs/delete_job.html",

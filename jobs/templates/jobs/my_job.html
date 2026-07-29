@@ -118,12 +118,42 @@
     }
 
     .empty {
-        background: white;
-        padding: 50px;
-        text-align: center;
+        background: #fff;
         border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0,0,0,.08);
+        padding: 60px 30px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
     }
+
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: #eef4ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .empty-icon i {
+        font-size: 36px;
+        color: #0d6efd;
+    }
+
+    .empty h3 {
+        font-weight: 700;
+        color: #212529;
+        margin-bottom: 12px;
+    }
+
+    .empty p {
+        color: #6c757d;
+        max-width: 500px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
 
     @media(max-width:768px){
 
@@ -170,17 +200,6 @@
                 <h3 class="job-title">
                     {{ job.title }}
                 </h3>
-
-                {% if job.application_deadline >= today %}
-                    <span class="status active">
-                        Active
-                    </span>
-                {% else %}
-                    {% comment %} <span class="status expired">
-                        Expired
-                    </span> {% endcomment %}
-                {% endif %}
-
             </div>
 
             <div class="job-info">
@@ -232,21 +251,25 @@
 
     {% else %}
 
-        <div class="empty">
+         <div class="empty">
+            <div class="empty-icon">
+                <i class="bi bi-search"></i>
+            </div>
 
-            <h4>No Jobs Posted Yet</h4>
+            <h3>No Jobs Found</h3>
 
             <p>
-                You haven't posted any jobs yet.
+                We couldn't find any jobs matching your search or filter criteria.
+                Try adjusting your filters or search with different keywords.
             </p>
 
-            <br>
-
-            <a href="{% url 'jobs:create_job_view' %}" class="btn btn-view">
-                + Create Your First Job
+            <a href="{% url 'jobs:job_list_view' %}" class="btn btn-primary mt-3">
+                View All Jobs
             </a>
-
         </div>
+
+
+        {% if jobs %}
 
         <nav class="mt-4">
 
@@ -294,6 +317,7 @@
         </ul>
 
     </nav>
+    {% endif %}
 
 
     {% endif %}

@@ -3,7 +3,6 @@
 {% block title %}Job Seeker Dashboard{% endblock %}
 
 {% block content %}
-
 <style>
 
 :root{
@@ -113,9 +112,10 @@ body{
 =========================== */
 
 .dashboard-stats{
-
-    margin-bottom:35px;
-
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 35px;
 }
 
 .stat-card{
@@ -337,6 +337,46 @@ body{
 
 }
 
+/* ===========================
+      APPLICATION ROW EXTRAS
+=========================== */
+
+.app-company-cell{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.app-logo{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    background:#dbeafe;
+    color:var(--primary);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:16px;
+    font-weight:700;
+    flex-shrink:0;
+}
+
+.app-job-title{
+    font-weight:600;
+    color:var(--text);
+}
+
+.app-time{
+    color:var(--muted);
+    font-size:13px;
+}
+
+.empty-state-card{
+    border:2px dashed var(--border);
+    border-radius:16px;
+    background:#fafcff;
+}
+
 
 /* ===========================
       APPLICATION TABLE
@@ -345,6 +385,8 @@ body{
 .application-table{
 
     margin-bottom:0;
+    table-layout:fixed;
+    width:100%;
 
 }
 
@@ -360,7 +402,21 @@ body{
 
     border:none;
 
+    text-align:left;
+
 }
+
+.application-table th:nth-child(1),
+.application-table td:nth-child(1){ width:38%; }
+
+.application-table th:nth-child(2),
+.application-table td:nth-child(2){ width:22%; }
+
+.application-table th:nth-child(3),
+.application-table td:nth-child(3){ width:20%; }
+
+.application-table th:nth-child(4),
+.application-table td:nth-child(4){ width:20%; }
 
 .application-table tbody td{
 
@@ -369,6 +425,10 @@ body{
     padding:18px 10px;
 
     border-top:1px solid #eef2f7;
+
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
 
 }
 
@@ -674,6 +734,10 @@ body{
 
 }
 
+.dashboard-stats{
+        grid-template-columns: 1fr;
+    }
+
 .application-table{
 
     min-width:850px;
@@ -697,7 +761,6 @@ body{
 }
 
 </style>
-
 <div class="container py-5 jobseeker-dashboard">
 
     <!-- ================= Header ================= -->
@@ -985,7 +1048,7 @@ body{
 
 
         <div class="table-responsive">
-
+        {% if applications %}
             <table class="table application-table align-middle">
 
                 <thead>
@@ -1004,38 +1067,61 @@ body{
 
 
                 <tbody>
-                    {% if application %}
-                {% for application in applications %}
+    
+        {% for application in applications %}
+        <tr>
 
-                <tr>
-                   
+            <td>
+                <div class="app-company-cell">
+                    <div class="app-logo">
+                        {{application.job.company_name|first|upper}}
+                    </div>
+                    <span class="app-job-title">{{application.job.title}}</span>
+                </div>
+            </td>
 
-                    <td>{{application.job.title}}</td>
+            <td>{{application.job.company_name}}</td>
 
-                    <td>{{application.job.company_name}}</td>
+            <td>
+                <span class="app-time">{{application.applied_at|timesince}} ago</span>
+            </td>
 
-                    <td>{{application.applied_at|timesince}} ago</td>
+            <td>
 
-                    <td>
+                <a href="{% url 'jobs:job_detail_view' application.job.pk %}" class="btn btn-sm btn-outline-primary">
 
-                    </td>
+                    View Job
 
-                    <td>
+                </a>
 
-                        <a href="{% url 'jobs:job_detail_view' application.job.pk %}" class="btn btn-sm btn-outline-primary">
+            </td>
 
-                            View Job
+        </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="4" style="border:none; padding-top:10px;">
 
-                        </a>
+                <div class="empty-state empty-state-card">
 
-                    </td>
-                    {% endfor %}
-                    {% endif %}
+                    <div class="empty-icon">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
 
-                </tr>
+                    <h4>No applications yet</h4>
 
+                    <p>You haven't applied to any jobs yet. Start browsing and apply to your first opportunity.</p>
 
-                </tbody>
+                    <a href="{% url 'jobs:job_list_view' %}" class="btn btn-primary">
+                        Browse Jobs
+                    </a>
+
+                </div>
+
+            </td>
+        </tr>
+    {% endif %}
+</tbody>
 
             </table>
 
@@ -1046,105 +1132,104 @@ body{
 
     <!-- ================= Latest Jobs ================= -->
 
-    <div class="dashboard-section latest-jobs-section">
+   <!-- ================= Latest Jobs ================= -->
 
-        <div class="section-header">
+<div class="dashboard-section latest-jobs-section">
 
-            <div>
+    <div class="section-header">
 
-                <h3 class="section-title">
-                    Latest Jobs
-                </h3>
-
-                <p class="section-subtitle">
-                    Recently posted opportunities.
-                </p>
-
-            </div>
-
-            <a href="{% url 'jobs:job_list_view' %}" class="btn btn-outline-primary">
-
-                Browse All Jobs
-
-            </a>
-
+        <div>
+            <h3 class="section-title">Latest Jobs</h3>
+            <p class="section-subtitle">
+                Recently posted opportunities.
+            </p>
         </div>
 
+        <a href="{% url 'jobs:job_list_view' %}" class="btn btn-outline-primary">
+            Browse All Jobs
+        </a>
 
-        <div class="row g-4">
+    </div>
 
-            <div class="col-lg-4">
-                {% if jobs %}
-                {% for job in jobs %}
+    {% if jobs %}
 
-                <div class="job-card">
+    <div class="row g-4">
 
-                    <div class="job-card-header">
+        {% for job in jobs %}
 
-                        <div class="job-logo">
+        <div class="col-lg-4">
 
-                            T
+            <div class="job-card">
 
-                        </div>
-                        
+                <div class="job-card-header">
 
-                        <div>
-                            
-
-                            <h5 class="job-name">
-
-                                {{job.title}}
-
-                            </h5>
-
-                            <p class="job-company">
-
-                                {{job.company_name}}
-
-                            </p>
-
-                        </div>
-
+                    <div class="job-logo">
+                        {{ job.company_name|first|upper }}
                     </div>
 
-                    <div class="job-meta">
-
-                        <span class="job-location">
-                            <i class="bi bi-geo-alt"></i>
-                            {{job.location}}
-                        </span>
-
-                        <span class="job-type">
-                            {{job.get_job_type_display}}
-                        </span>
-
-                    </div>
-
-                    <div class="job-actions">
-                        <a href="{% url 'jobs:job_detail_view' job.pk %}" class="btn btn-outline-primary">
-
-                            View
-
-                        </a>
-                        {% if job.pk not in applied_job_ids %}
-
-                        <a href="{% url 'application:apply_view' job.pk %}" class="btn btn-primary">
-
-                            Apply
-                        </a>
-                        {% endif %}
+                    <div>
+                        <h5 class="job-name">{{ job.title }}</h5>
+                        <p class="job-company">{{ job.company_name }}</p>
                     </div>
 
                 </div>
 
-                {% endfor %}
-                {% endif %}
+                <div class="job-meta">
+
+                    <span>
+                        <i class="bi bi-geo-alt"></i>
+                        {{ job.location }}
+                    </span>
+
+                    <span>{{ job.get_job_type_display }}</span>
+
+                </div>
+
+                <div class="job-actions">
+
+                    <a href="{% url 'jobs:job_detail_view' job.pk %}" class="btn btn-outline-primary">
+                        View
+                    </a>
+
+                    {% if job.pk not in applied_job_ids %}
+                    <a href="{% url 'application:apply_view' job.pk %}" class="btn btn-primary">
+                        Apply
+                    </a>
+                    {% endif %}
+
+                </div>
 
             </div>
 
         </div>
 
+        {% endfor %}
+
     </div>
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <div class="empty-icon">
+            <i class="bi bi-briefcase"></i>
+        </div>
+
+        <h4>No jobs available</h4>
+
+        <p>
+            There are no job postings at the moment. Check back later for new opportunities.
+        </p>
+
+        <a href="{% url 'jobs:job_list_view' %}" class="btn btn-primary">
+            Browse Jobs
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
 
 </div>
 
