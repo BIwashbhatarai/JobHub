@@ -34,7 +34,6 @@ ALLOWED_HOSTS = [
     "jobhub-v2y0.onrender.com",
 ]
 
-
 # Application definition
 
 INSTALLED_APPS = [
