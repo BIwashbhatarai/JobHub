@@ -10,6 +10,7 @@ from jobs.models import Job
 from application.models import Application
 from django.core.paginator import Paginator
 from .forms import RecruiterProfileForm
+from jobs.models import Saved_job
 
 
 def register_view(request):
@@ -187,10 +188,19 @@ def job_seeker_dashboard_view(request):
     total_pending_jobs = Application.objects.filter(
         applicant=request.user, status="PENDING,"
     ).count()
+
     total_accepted_jobs = Application.objects.filter(
         applicant=request.user,
         status="ACCEPTED",
     ).count()
+
+    total_saved_jobs = (
+        Saved_job.objects.filter(user=request.user)
+        .select_related("job")
+        .order_by("-saved_at")
+        .count()
+    )
+
     applied_job_ids = set(
         Application.objects.filter(applicant=request.user).values_list(
             "job_id", flat=True
@@ -201,6 +211,15 @@ def job_seeker_dashboard_view(request):
         .filter(applicant=request.user)
         .order_by("-applied_at")[:5]
     )
+
+    saved_jobs = (
+        Saved_job.objects.filter(
+            user=request.user,
+        )
+        .select_related("job")
+        .order_by("-saved_at")
+    )
+
     return render(
         request,
         "accounts/job_seeker_dashboard.html",
@@ -210,7 +229,9 @@ def job_seeker_dashboard_view(request):
             "applications": applications,
             "jobs": jobs,
             "applied_job_ids": applied_job_ids,
+            "saved_jobs": saved_jobs,
             "total_pending_jobs": total_pending_jobs,
             "total_accepted_jobs": total_accepted_jobs,
+            "total_saved_jobs": total_saved_jobs,
         },
     )

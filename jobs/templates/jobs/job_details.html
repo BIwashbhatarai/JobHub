@@ -105,13 +105,23 @@
         gap: 15px;
     }
 
+    .action-buttons {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
     .btn-back,
-    .btn-apply {
+    .btn-apply,
+    .btn-save,
+    .btn-unsave {
         text-decoration: none;
         padding: 12px 22px;
         border-radius: 8px;
         font-weight: 600;
         transition: .3s;
+        border: none;
+        cursor: pointer;
     }
 
     .btn-back {
@@ -134,6 +144,24 @@
         color: white;
     }
 
+    .btn-save {
+        background: #198754;
+        color: white;
+    }
+
+    .btn-save:hover {
+        background: #157347;
+    }
+
+    .btn-unsave {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-unsave:hover {
+        background: #bb2d3b;
+    }
+
     @media (max-width:768px) {
         .info-grid {
             grid-template-columns: 1fr;
@@ -149,8 +177,16 @@
             align-items: stretch;
         }
 
+        .action-buttons {
+            width: 100%;
+            flex-direction: column;
+        }
+
         .btn-back,
-        .btn-apply {
+        .btn-apply,
+        .btn-save,
+        .btn-unsave {
+            width: 100%;
             text-align: center;
         }
     }
@@ -234,14 +270,35 @@
                 ← Back to Jobs
             </a>
 
-            
+            <div class="action-buttons">
 
-            {% if request.user.is_authenticated and request.user.role == "JOB_SEEKER" and not applied %}
-            
-                <a href="{% url 'application:apply_view' job.id %}" class="btn-apply">
-                    Apply Now
-                </a>
-            {% endif %}
+                {% if request.user.is_authenticated and request.user.role == "JOB_SEEKER" %}
+
+                    {% if is_saved %}
+                        <form method="post" action="{% url 'jobs:job_unsaved_view' job.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-unsave">
+                                ❤️ Unsave Job
+                            </button>
+                        </form>
+                    {% else %}
+                        <form method="post" action="{% url 'jobs:job_saved_view' job.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-save">
+                                🤍 Save Job
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    {% if not applied %}
+                        <a href="{% url 'application:apply_view' job.pk %}" class="btn-apply">
+                            Apply Now
+                        </a>
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
 
         </div>
 

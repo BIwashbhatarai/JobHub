@@ -7,6 +7,7 @@ from django.utils import timezone
 from application.models import Application
 from django.db.models import Q
 from django.core.paginator import Paginator
+from .models import Saved_job
 
 
 @login_required
@@ -90,12 +91,18 @@ def job_detail_view(request, pk):
         job=job,
     ).exists()
 
+    is_saved = Saved_job.objects.filter(
+        user=request.user,
+        job=job,
+    ).exists()
+
     return render(
         request,
         "jobs/job_details.html",
         {
             "job": job,
             "applied": applied,
+            "is_saved": is_saved,
         },
     )
 
@@ -154,4 +161,74 @@ def job_delete_view(request, pk):
         request,
         "jobs/delete_job.html",
         {"job": job},
+    )
+
+
+@login_required
+def job_saved_view(request, pk):
+    if request.user.role != "JOB_SEEKER":
+        messages.error(request, "Only job seekers can save jobs")
+        return redirect("jobs:job_detail_view", pk=pk)
+
+    job = get_object_or_404(Job, pk=pk)
+
+    Saved_job.objects.get_or_create(
+        user=request.user,
+        job=job,
+    )
+
+    messages.success(
+        request,
+        "Job saved successfully",
+    )
+
+    return redirect("jobs:job_detail_view", pk=pk)
+
+
+@login_required
+def job_unsaved_view(request, pk):
+    if request.user.role != "JOB_SEEKER":
+        messages.error(
+            request,
+            "Only job seeker can unsave jobs",
+        )
+        return redirect("jobs:job_detail_view", pk=pk)
+
+    job = get_object_or_404(Job, pk=pk)
+
+    saved_job = Saved_job.objects.filter(
+        user=request.user,
+        job=job,
+    )
+    saved_job.delete()
+    messages.success(
+        request,
+        "Successfully unsaved the job",
+    )
+
+    return redirect("jobs:job_detail_view", pk=pk)
+
+
+@login_required
+def job_saved_list(request):
+
+    if request.user.role != "JOB_SEEKER":
+        messages.error(
+            request,
+            "Only the job seeker can view their saved jobs",
+        )
+        return redirect("job_seeker_dashboard_view")
+
+    saved_jobs = (
+        Saved_job.objects.filter(user=request.user)
+        .select_related("job")
+        .order_by("-saved_at")
+    )
+
+    return render(
+        request,
+        "jobs/saved_job.html",
+        {
+            "saved_jobs": saved_jobs,
+        },
     )

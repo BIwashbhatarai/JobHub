@@ -11,4 +11,7 @@ urlpatterns = [
     path("job-detail/<int:pk>/", job_detail_view, name="job_detail_view"),
     path("job-edit/<int:pk>/", job_edit_view, name="job_edit_view"),
     path("job-delete/<int:pk>/", job_delete_view, name="job_delete_view"),
+    path("job/<int:pk>/saved/", job_saved_view, name="job_saved_view"),
+    path("job/<int:pk>/unsaved/", job_unsaved_view, name="job_unsaved_view"),
+    path("saved_jobs/", job_saved_list, name="job_saved_list"),
 ]

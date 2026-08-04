@@ -908,6 +908,32 @@ body{
 
         </div>
 
+        <div class="col-lg-4">
+
+            <div class="stat-card">
+
+                <div class="stat-card-icon success">
+
+                    <i class="bi bi-briefcase-fill"></i>
+
+                </div>
+
+                <div class="stat-card-content">
+
+                    <p class="stat-title">
+                        Saved_jobs
+                    </p>
+
+                    <h2 class="stat-value">
+                        {{total_saved_jobs}}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
 
@@ -1129,8 +1155,80 @@ body{
 
     </div>
 
+    <!-- ================= Saved Jobs ================= -->
 
-    <!-- ================= Latest Jobs ================= -->
+<div class="dashboard-section saved-jobs-section">
+
+    <div class="section-header">
+
+        <div>
+            <h3 class="section-title">Saved Jobs</h3>
+            <p class="section-subtitle">
+                Jobs you've bookmarked for later.
+            </p>
+        </div>
+
+        <a href="{% url 'jobs:job_saved_list' %}" class="btn btn-outline-primary">
+            View All
+        </a>
+
+    </div>
+
+
+  <div class="table-responsive">
+{% if saved_jobs %}
+    <table class="table application-table align-middle">
+
+        <thead>
+        <tr>
+            <th>Job</th>
+            <th>Company</th>
+            <th>Saved</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for saved_job in saved_jobs %}
+            <tr>
+                <td>
+                    <div class="app-company-cell">
+                        <div class="app-logo">{{ saved_job.job.company_name|first|upper }}</div>
+                        <span class="app-job-title">{{ saved_job.job.title }}</span>
+                    </div>
+                </td>
+                <td>{{ saved_job.job.company_name }}</td>
+                <td><span class="app-time">{{ saved_job.saved_at|timesince }} ago</span></td>
+                <td>
+                    <a href="{% url 'jobs:job_detail_view' saved_job.job.id %}" class="btn btn-sm btn-outline-primary">View Job</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+{% else %}
+    <div class="empty-state empty-state-card">
+
+        <div class="empty-icon">
+            <i class="bi bi-bookmark-star"></i>
+        </div>
+
+        <h4>No saved jobs yet</h4>
+
+        <p>Save jobs you're interested in to review them later.</p>
+
+        <a href="{% url 'jobs:job_list_view' %}" class="btn btn-primary">
+            Browse Jobs
+        </a>
+
+    </div>
+{% endif %}
+</div>
+
+</div>
+
+
 
    <!-- ================= Latest Jobs ================= -->
 
