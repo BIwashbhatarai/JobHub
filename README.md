@@ -1,8 +1,8 @@
 # 🚀 JobHub – Django Job Portal
 
-JobHub is a full-stack job portal built with **Django** that connects **job seekers** with **recruiters**. Recruiters can post and manage jobs, while job seekers can search, apply, and track their applications through a clean and responsive interface.
+JobHub is a full-stack job portal built with **Django** that connects **job seekers** with **recruiters**. Recruiters can post and manage jobs, while job seekers can search, apply, save jobs, and track their applications through a clean and responsive interface.
 
-This project was built to practice real-world Django development concepts such as authentication, role-based access control, CRUD operations, file uploads, search & filtering, dashboards, and relational database design.
+This project was built to practice real-world Django development concepts such as authentication, role-based access control, CRUD operations, file uploads, search & filtering, dashboards, email notifications, and relational database design.
 
 ---
 
@@ -57,6 +57,8 @@ This project was built to practice real-world Django development concepts such a
 * Prevent Duplicate Applications
 * Track Application Status
 * View Applied Jobs
+* Save/Unsave Jobs
+* View Saved Jobs
 
 ---
 
@@ -76,6 +78,14 @@ This project was built to practice real-world Django development concepts such a
 
 ---
 
+### 📧 Email Notifications
+
+* Automatic Welcome Email on Registration
+* Application Confirmation Email to Job Seeker
+* New Applicant Notification Email to Recruiter
+
+---
+
 ### 📊 Dashboards
 
 #### Recruiter Dashboard
@@ -90,6 +100,9 @@ This project was built to practice real-world Django development concepts such a
 
 * Applied Jobs
 * Available Jobs
+* Pending Applications
+* Accepted Applications
+* Saved Jobs Overview
 * Recent Applications
 * Latest Jobs
 * Quick Actions
@@ -109,6 +122,7 @@ This project was built to practice real-world Django development concepts such a
 * Role-Based Permissions
 * Login Required Views
 * Duplicate Application Prevention
+* Duplicate Saved Job Prevention
 * Form Validation
 * Deadline Validation
 * Active Job Validation
@@ -121,6 +135,7 @@ This project was built to practice real-world Django development concepts such a
 
 * Python
 * Django
+* Django Email Backend (SMTP)
 
 ### Database
 
@@ -130,7 +145,6 @@ This project was built to practice real-world Django development concepts such a
 
 * HTML5
 * CSS3
-* Bootstrap 5
 
 ### Other
 
@@ -140,6 +154,7 @@ This project was built to practice real-world Django development concepts such a
 * File Uploads
 * Authentication System
 * Messages Framework
+* Automated Email Notifications
 
 ---
 
@@ -227,26 +242,11 @@ http://127.0.0.1:8000/
 
 ---
 
-## 📸 Screenshots
-
-Add screenshots here after deployment.
-
-* Home Page
-* Recruiter Dashboard
-* Job Seeker Dashboard
-* Job Listing
-* Job Details
-* Applicant Management
-
----
-
 ## 📈 Future Improvements
 
 * PostgreSQL Support
 * Django REST Framework API
 * React Frontend
-* Email Notifications
-* Saved Jobs
 * Company Profiles
 * AI Job Recommendations
 * Resume Parsing
@@ -270,6 +270,8 @@ During this project, I gained hands-on experience with:
 * Search & Filtering
 * Query Optimization
 * Role-Based Dashboards
+* Sending Automated Emails with Django
+* Handling Edge Cases (Duplicate Saves, Empty States)
 * Git & GitHub Workflow
 * Building a Real-World Django Application
 
