@@ -302,16 +302,30 @@ def job_seeker_dashboard_view(request):
 
 def verify_otp_view(request):
     data = request.session.get("pending_user")
+    correct_otp = request.session.get("registration_otp")
+    otp_created_at = request.session.get("otp_created_at")
+
+    if not data or not correct_otp or not otp_created_at:
+        messages.error(request, "The OTP has expired. Please register again")
+        return redirect("register_view")
+
+    created_at = timezone.datetime.fromisoformat(otp_created_at)
+
+    if timezone.now() - created_at > timedelta(minutes=5):
+        request.session.pop("registration_otp", None)
+        request.session.pop("otp_created_at", None)
+        request.session.pop("pending_user", None)
+        messages.error(request, "The OTP has expired. Please register again")
+        return redirect("register_view")
 
     if request.method == "POST":
         user_otp = request.POST.get("otp")
-        correct_otp = request.session.get("registration_otp")
-        if not correct_otp:
-            messages.error(request, "The OTP has expired. Please register again")
-            return redirect("register_view")
 
         if user_otp == correct_otp:
-            messages.success(request, "OTP verified suceessfully")
+            request.session.pop("registration_otp", None)
+            request.session.pop("otp_created_at", None)
+            request.session.pop("pending_user", None)
+            messages.success(request, "OTP verified successfully")
 
             user = User.objects.create_user(
                 username=data["username"],
@@ -324,7 +338,4 @@ def verify_otp_view(request):
         else:
             messages.error(request, "Invalid OTP")
 
-    return render(
-        request,
-        "accounts/otp_registration.html",
-    )
+    return render(request, "accounts/otp_registration.html")
