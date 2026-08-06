@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
-{% block content %}<style>
+{% block content %}
+<style>
 
 :root{
     --primary:#2563eb;
@@ -383,88 +384,128 @@ body{
 
         <span class="saved-count-badge">
             <i class="bi bi-bookmark-star-fill"></i>
-            {{saved_jobs.count}} Saved
+            {{ saved_jobs.paginator.count|default:saved_jobs.count }} Saved
         </span>
 
     </div>
 
 
-    <!-- ================= Job Cards ================= -->
+    <!-- ================= Job Cards & Pagination ================= -->
 
     <div class="row g-4">
         {% if saved_jobs %}
-        {% for saved_job in saved_jobs %}
+            {% for saved_job in saved_jobs %}
+            <div class="col-lg-6">
+                <div class="job-card">
 
-        <div class="col-lg-6">
-            <div class="job-card">
+                    <div class="job-card-top">
 
-                <div class="job-card-top">
-
-                    <div class="job-card-heading">
-                        <div class="job-logo">{{saved_job.job.company_name|first|upper}}</div>
-                        <div>
-                            <h4 class="job-title">{{saved_job.job.title}}</h4>
-                            <p class="job-company">{{saved_job.job.company_name}}</p>
+                        <div class="job-card-heading">
+                            <div class="job-logo">{{ saved_job.job.company_name|first|upper }}</div>
+                            <div>
+                                <h4 class="job-title">{{ saved_job.job.title }}</h4>
+                                <p class="job-company">{{ saved_job.job.company_name }}</p>
+                            </div>
                         </div>
+
+                        <span class="job-type-badge full-time">{{ saved_job.job.get_job_type_display }}</span>
+
                     </div>
 
-                    <span class="job-type-badge full-time">{{saved_job.job.get_job_type_display}}</span>
+                    <div class="job-meta-grid">
+
+                        <div>
+                            <div class="job-meta-label">Location</div>
+                            <div class="job-meta-value">{{ saved_job.job.location }}</div>
+                        </div>
+
+                        <div>
+                            <div class="job-meta-label">Experience</div>
+                            <div class="job-meta-value">{{ saved_job.job.get_experience_level_display }}</div>
+                        </div>
+
+                        <div>
+                            <div class="job-meta-label">Salary</div>
+                            <div class="job-meta-value">${{ saved_job.job.salary }} /month</div>
+                        </div>
+
+                        <div>
+                            <div class="job-meta-label">Posted</div>
+                            <div class="job-meta-value">{{ saved_job.job.created_at|date:"F d, Y" }}</div>
+                        </div>
+
+                    </div>
+
+                    <p class="job-description">
+                        {{ saved_job.job.description|truncatewords:25 }}
+                    </p>
+
+                    <div class="job-card-actions">
+                        <a href="{% url 'jobs:job_detail_view' saved_job.job.id %}" class="btn btn-primary">View Job</a>
+                        <form action="{% url 'jobs:job_unsaved_view' saved_job.job.pk %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-unsave">
+                                <i class="bi bi-bookmark-x"></i> Unsave
+                            </button>
+                        </form>
+                    </div>
 
                 </div>
-
-                <div class="job-meta-grid">
-
-                    <div>
-                        <div class="job-meta-label">Location</div>
-                        <div class="job-meta-value">{{saved_job.job.location}}</div>
-                    </div>
-
-                    <div>
-                        <div class="job-meta-label">Experience</div>
-                        <div class="job-meta-value">{{saved_job.job.get_experience_level_display}}</div>
-                    </div>
-
-                    <div>
-                        <div class="job-meta-label">Salary</div>
-                        <div class="job-meta-value">${{saved_job.job.salary}} /month</div>
-                    </div>
-
-                    <div>
-                        <div class="job-meta-label">Posted</div>
-                        <div class="job-meta-value">{{ saved_job.job.created_at|date:"F d, Y" }}</div>
-                    </div>
-
-                </div>
-
-                <p class="job-description">
-                    {{ saved_job.job.description|truncatewords:25 }}
-                </p>
-
-                <div class="job-card-actions">
-                    <a href="{% url 'jobs:job_detail_view' saved_job.job.id %}" class="btn btn-primary">View Job</a>
-                    <form action="{% url 'jobs:job_unsaved_view' saved_job.job.pk %}" method="post" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-unsave">
-                            <i class="bi bi-bookmark-x"></i> Unsave
-                        </button>
-                    </form>
-                </div>
-
             </div>
-        </div>
+            {% endfor %}
 
-        {% endfor %}
+            {% if saved_jobs.has_other_pages %}
+            <div class="col-12">
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center">
+
+                        {% if saved_jobs.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ saved_jobs.previous_page_number }}">
+                                Previous
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in saved_jobs.paginator.page_range %}
+                            {% if saved_jobs.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">
+                                        {{ num }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if saved_jobs.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ saved_jobs.next_page_number }}">
+                                Next
+                            </a>
+                        </li>
+                        {% endif %}
+
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+
         {% else %}
-        <div class="empty-state">
-            <div class="empty-icon">
-                <i class="bi bi-bookmark-star"></i>
+            <div class="col-12">
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="bi bi-bookmark-star"></i>
+                    </div>
+                    <h3>No saved jobs yet</h3>
+                    <p>Save jobs you're interested in to review them later.</p>
+                    <a href="{% url 'jobs:job_list_view' %}" class="btn btn-primary">Browse Jobs</a>
+                </div>
             </div>
-            <h3>No saved jobs yet</h3>
-            <p>Save jobs you're interested in to review them later.</p>
-            <a href="{% url 'jobs:job_list_view' %}" class="btn btn-primary">Browse Jobs</a>
-        </div>
         {% endif %}
-
     </div>
 
 </div>

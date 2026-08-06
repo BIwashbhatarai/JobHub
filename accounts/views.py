@@ -11,23 +11,76 @@ from application.models import Application
 from django.core.paginator import Paginator
 from .forms import RecruiterProfileForm
 from jobs.models import Saved_job
+import secrets
+from django.core.mail import send_mail
+import os
+from textwrap import dedent
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+from datetime import timedelta
+
+User = get_user_model()
+
+
+def generate_otp():
+    return str(secrets.randbelow(900000) + 100000)
 
 
 def register_view(request):
-    if request.user.is_authenticated:
-        return redirect("home")
 
     if request.method == "POST":
         form = RegistrationForm(request.POST)
 
         if form.is_valid():
-            form.save()
-            messages.success(
-                request, "Your account has successfully created, please log in now"
+            otp = generate_otp()
+            request.session["registration_otp"] = otp  # save the registration otp
+            request.session["otp_created_at"] = timezone.now().isoformat()
+            otp_created_at = request.session.get("otp_created_at")
+
+            object_created_at = timezone.datetime.fromisoformat(otp_created_at)
+
+            request.session["pending_user"] = {  # save the user data
+                "username": form.cleaned_data["username"],
+                "email": form.cleaned_data["email"],
+                "role": form.cleaned_data["role"],
+                "password1": form.cleaned_data["password1"],
+                "password2": form.cleaned_data["password2"],
+            }
+
+            if timezone.now() - object_created_at > timedelta(minutes=5):
+                request.session.pop("registration_otp")
+                request.session.pop("otp_created_at")
+                request.session.pop("pending_user")
+
+                messages.error(request, "OTP has expired. Please register again.")
+                return redirect("register_view")
+
+            send_mail(
+                subject="JobHub - Email Verification OTP",
+                message=dedent(f"""
+                    Hello,
+
+                    Thank you for registering on JobHub.
+
+                    Your One-Time Password (OTP) for email verification is:
+
+                    {otp}
+
+                    This OTP is valid for 5 minutes.
+
+                    Please do not share this OTP with anyone.
+
+                    If you did not request this verification, you can safely ignore this email.
+
+                    Regards,
+                    JobHub Team
+                """).strip(),
+                from_email=os.getenv("EMAIL_HOST_USER"),
+                recipient_list=[form.cleaned_data["email"]],
+                fail_silently=False,
             )
-            return redirect("login_view")
-        else:
-            messages.error(request, "Invalid details, please try again")
+            return redirect("verify_otp_view")
+
     else:
         form = RegistrationForm()
     return render(
@@ -183,10 +236,13 @@ def job_seeker_dashboard_view(request):
         return redirect("recruiter_dashboard_view")
 
     available_jobs = Job.objects.filter(is_active=True).count()
-    jobs = Job.objects.filter(is_active=True).order_by("-created_at")[:6]
+
+    # Use a queryset (no slice) and paginate it
+    jobs_qs = Job.objects.filter(is_active=True).order_by("-created_at")
+
     total_applied_jobs = Application.objects.filter(applicant=request.user).count()
     total_pending_jobs = Application.objects.filter(
-        applicant=request.user, status="PENDING,"
+        applicant=request.user, status="PENDING"
     ).count()
 
     total_accepted_jobs = Application.objects.filter(
@@ -212,13 +268,20 @@ def job_seeker_dashboard_view(request):
         .order_by("-applied_at")[:5]
     )
 
-    saved_jobs = (
-        Saved_job.objects.filter(
-            user=request.user,
-        )
+    # Saved jobs queryset & pagination (use a distinct page param)
+    saved_jobs_qs = (
+        Saved_job.objects.filter(user=request.user)
         .select_related("job")
         .order_by("-saved_at")
     )
+    saved_paginator = Paginator(saved_jobs_qs, 3)
+    saved_page = request.GET.get("saved_page")
+    saved_jobs = saved_paginator.get_page(saved_page)
+
+    # Latest jobs pagination (use a distinct page param)
+    jobs_paginator = Paginator(jobs_qs, 3)
+    jobs_page = request.GET.get("jobs_page")
+    jobs = jobs_paginator.get_page(jobs_page)
 
     return render(
         request,
@@ -234,4 +297,34 @@ def job_seeker_dashboard_view(request):
             "total_accepted_jobs": total_accepted_jobs,
             "total_saved_jobs": total_saved_jobs,
         },
+    )
+
+
+def verify_otp_view(request):
+    data = request.session.get("pending_user")
+
+    if request.method == "POST":
+        user_otp = request.POST.get("otp")
+        correct_otp = request.session.get("registration_otp")
+        if not correct_otp:
+            messages.error(request, "The OTP has expired. Please register again")
+            return redirect("register_view")
+
+        if user_otp == correct_otp:
+            messages.success(request, "OTP verified suceessfully")
+
+            user = User.objects.create_user(
+                username=data["username"],
+                email=data["email"],
+                role=data["role"],
+                password=data["password1"],
+            )
+
+            return redirect("login_view")
+        else:
+            messages.error(request, "Invalid OTP")
+
+    return render(
+        request,
+        "accounts/otp_registration.html",
     )

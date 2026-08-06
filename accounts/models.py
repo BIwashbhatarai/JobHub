@@ -30,4 +30,12 @@ class RecruiterProfile(models.Model):
     phone = models.CharField(max_length=15, blank=True)
     address = models.CharField(max_length=255, blank=True)
     bio = models.TextField(blank=True)
+
+    company_name = models.CharField(max_length=255, blank=True)
+    company_logo = models.ImageField(upload_to="company/", blank=True, null=True)
+    company_description = models.TextField(blank=True)
+    company_website = models.URLField(blank=True)
+    company_industry = models.CharField(max_length=255, blank=True)
+    company_location = models.CharField(max_length=255, blank=True)
+
     created = models.DateTimeField(auto_now_add=True)

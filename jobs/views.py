@@ -225,6 +225,10 @@ def job_saved_list(request):
         .order_by("-saved_at")
     )
 
+    paginator = Paginator(saved_jobs, 5)
+    page_no = request.GET.get("page")
+    saved_jobs = paginator.get_page(page_no)
+
     return render(
         request,
         "jobs/saved_job.html",

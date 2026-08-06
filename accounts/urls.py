@@ -17,4 +17,5 @@ urlpatterns = [
     ),
     path("profile/", profile_view, name="profile_view"),
     path("edit-profile/", edit_profile_view, name="edit_profile_view"),
+    path("verify_otp/", verify_otp_view, name="verify_otp_view"),
 ]

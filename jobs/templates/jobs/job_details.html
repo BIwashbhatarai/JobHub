@@ -3,307 +3,341 @@
 {% block content %}
 
 <style>
-    body {
-        background: #f5f7fa;
-    }
+  :root{
+    --bg:#f4f6f9;
+    --card:#ffffff;
+    --muted:#64748b;
+    --accent:#0d6efd;
+    --success:#198754;
+    --danger:#dc3545;
+    --border:#e1e6ed;
+    --radius:10px;
+    --shadow:0 2px 8px rgba(0,0,0,0.04);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
 
-    .job-detail-container {
-        max-width: 900px;
-        margin: 50px auto;
-    }
+  body { background: var(--bg); }
 
-    .job-card {
-        background: #fff;
-        padding: 35px;
-        border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0,0,0,.08);
-    }
+  .container {
+    max-width: 1080px;
+    margin: 28px auto;
+    padding: 0 16px;
+  }
 
-    .job-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 25px;
-        flex-wrap: wrap;
-        gap: 15px;
-    }
+  /* Top action bar */
+  .top-bar {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:16px;
+  }
+  .top-left {
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .back-link {
+    color:var(--muted);
+    text-decoration:none;
+    font-weight:600;
+  }
+  .action-group {
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .icon-btn {
+    border:1px solid var(--border);
+    background:var(--card);
+    padding:8px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+    color:var(--muted);
+  }
+  .icon-btn.primary { background:var(--accent); color:#fff; border-color:transparent; }
+  .icon-btn.save { background:var(--success); color:#fff; border-color:transparent; }
+  .icon-btn.unsave { background:var(--danger); color:#fff; border-color:transparent; }
 
-    .job-title {
-        margin: 0;
-        font-size: 32px;
-        font-weight: 700;
-        color: #0d6efd;
-    }
+  /* Hero */
+  .hero {
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px;
+    box-shadow:var(--shadow);
+    margin-bottom:18px;
+  }
+  .hero-inner { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap; }
+  .hero-left { min-width:0; }
+  .job-title { font-size:26px; font-weight:700; margin:0; color:#0f172a; }
+  .meta-row { display:flex; gap:12px; align-items:center; margin-top:8px; color:var(--muted); font-weight:600; font-size:14px; flex-wrap:wrap; }
+  .badge { background:#eef2ff; color:var(--accent); padding:6px 12px; border-radius:999px; font-weight:700; font-size:13px; }
+  .pill { background:#f1f5f9; color:#334155; padding:6px 10px; border-radius:999px; font-size:13px; }
 
-    .job-type {
-        background: #0d6efd;
-        color: #fff;
-        padding: 8px 18px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 600;
-    }
+  .hero-right { text-align:right; min-width:200px; }
+  .company-link { color:var(--accent); font-weight:700; text-decoration:none; }
+  .small-muted { color:var(--muted); font-size:13px; margin-top:6px; }
 
-    .company {
-        font-size: 18px;
-        color: #555;
-        margin-bottom: 25px;
-    }
+  /* Grid */
+  .main-grid {
+    display:grid;
+    grid-template-columns: 1fr 320px;
+    gap:20px;
+    align-items:start;
+  }
+  .card {
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px;
+    box-shadow:var(--shadow);
+  }
 
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(2,1fr);
-        gap: 18px;
-        margin-bottom: 30px;
-    }
+  /* Left content */
+  .section-title { font-size:16px; font-weight:700; margin:0 0 10px 0; color:#0f172a; }
+  .text-body { color:var(--muted); line-height:1.6; margin-bottom:16px; white-space:pre-wrap; }
+  .list-compact { margin:8px 0 16px 0; padding-left:20px; color:var(--muted); }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .chip { background:#e0f2fe; color:#0369a1; padding:6px 12px; border-radius:6px; font-weight:700; font-size:13px; }
 
-    .info-box {
-        background: #f8f9fa;
-        padding: 18px;
-        border-radius: 10px;
-    }
+  /* Company sidebar */
+  .company-logo {
+    width:72px; height:72px; background:#f1f5f9; border-radius:18px; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; font-size:32px;
+  }
+  .company-name { font-size:18px; font-weight:700; color:#0f172a; text-align:center; margin-bottom:4px; }
+  .company-sub { text-align:center; color:var(--muted); font-size:14px; margin-bottom:12px; }
+  .company-stats { display:flex; gap:12px; justify-content:center; margin-bottom:12px; color:var(--muted); font-weight:600; font-size:13px; flex-wrap:wrap; }
+  .company-stats .stat { display:flex; gap:6px; align-items:center; }
 
-    .info-box h6 {
-        margin-bottom: 8px;
-        color: #666;
-        font-size: 14px;
-    }
+  .sidebar-actions { display:flex; flex-direction:column; gap:10px; margin-top:6px; }
+  .btn { padding:10px 12px; border-radius:8px; font-weight:700; text-align:center; cursor:pointer; border:1px solid var(--border); background:var(--card); text-decoration:none; color:var(--muted); }
+  .btn.primary { background:var(--accent); color:#fff; border-color:transparent; }
+  .btn.outline { background:transparent; color:var(--muted); }
+  .btn.website { background:#f8fafc; color:#0f172a; }
 
-    .info-box p {
-        margin: 0;
-        font-weight: 600;
-        color: #333;
-    }
+  .divider { height:1px; background:var(--border); margin:18px 0; border-radius:2px; }
 
-    .section {
-        margin-top: 35px;
-    }
+  /* Similar jobs */
+  .similar-jobs { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
+  .similar-jobs a { color:var(--accent); text-decoration:none; font-weight:600; }
 
-    .section h4 {
-        margin-bottom: 15px;
-        color: #222;
-        border-left: 5px solid #0d6efd;
-        padding-left: 10px;
-    }
-
-    .section p {
-        color: #555;
-        line-height: 1.8;
-    }
-
-    .requirements {
-        color: #555;
-        line-height: 1.8;
-    }
-
-    .footer {
-        margin-top: 40px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 15px;
-    }
-
-    .action-buttons {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
-    .btn-back,
-    .btn-apply,
-    .btn-save,
-    .btn-unsave {
-        text-decoration: none;
-        padding: 12px 22px;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: .3s;
-        border: none;
-        cursor: pointer;
-    }
-
-    .btn-back {
-        background: #6c757d;
-        color: white;
-    }
-
-    .btn-back:hover {
-        background: #5a6268;
-        color: white;
-    }
-
-    .btn-apply {
-        background: #0d6efd;
-        color: white;
-    }
-
-    .btn-apply:hover {
-        background: #0b5ed7;
-        color: white;
-    }
-
-    .btn-save {
-        background: #198754;
-        color: white;
-    }
-
-    .btn-save:hover {
-        background: #157347;
-    }
-
-    .btn-unsave {
-        background: #dc3545;
-        color: white;
-    }
-
-    .btn-unsave:hover {
-        background: #bb2d3b;
-    }
-
-    @media (max-width:768px) {
-        .info-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .job-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .footer {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .action-buttons {
-            width: 100%;
-            flex-direction: column;
-        }
-
-        .btn-back,
-        .btn-apply,
-        .btn-save,
-        .btn-unsave {
-            width: 100%;
-            text-align: center;
-        }
-    }
+  @media (max-width:900px){
+    .main-grid { grid-template-columns: 1fr; }
+    .hero-right { text-align:left; width:100%; }
+    .company-logo { margin-bottom:8px; }
+    .top-bar { flex-direction:column; align-items:flex-start; gap:8px; }
+  }
 </style>
 
-<div class="container job-detail-container">
+<div class="container">
 
-    <div class="job-card">
-
-        <div class="job-header">
-            <div>
-                <h2 class="job-title">{{ job.title }}</h2>
-
-                <div class="company">
-                    {{ job.company_name }}
-                </div>
-            </div>
-
-            <span class="job-type">
-                {{ job.get_job_type_display }}
-            </span>
-        </div>
-
-        <div class="info-grid">
-
-            <div class="info-box">
-                <h6>Recruiter</h6>
-                <p>{{ job.recruiter.get_full_name|default:job.recruiter.username }}</p>
-            </div>
-
-            <div class="info-box">
-                <h6>Location</h6>
-                <p>{{ job.location }}</p>
-            </div>
-
-            <div class="info-box">
-                <h6>Salary</h6>
-                {% if job.salary %}
-                    <p>$ {{ job.salary }}</p>
-                {% else %}
-                    <p>Negotiable</p>
-                {% endif %}
-            </div>
-
-            <div class="info-box">
-                <h6>Experience</h6>
-                <p>{{ job.get_experience_level_display }}</p>
-            </div>
-
-            <div class="info-box">
-                <h6>Application Deadline</h6>
-                <p>{{ job.application_deadline|date:"F d, Y" }}</p>
-            </div>
-
-            <div class="info-box">
-                <h6>Posted On</h6>
-                <p>{{ job.created_at|date:"F d, Y" }}</p>
-            </div>
-
-        </div>
-
-        <div class="section">
-            <h4>Job Description</h4>
-
-            <p>
-                {{ job.description }}
-            </p>
-        </div>
-
-        <div class="section">
-            <h4>Requirements</h4>
-
-            <div class="requirements">
-                {{ job.requirements|linebreaks }}
-            </div>
-        </div>
-
-        <div class="footer">
-
-            <a href="{% url 'jobs:job_list_view' %}" class="btn-back">
-                ← Back to Jobs
-            </a>
-
-            <div class="action-buttons">
-
-                {% if request.user.is_authenticated and request.user.role == "JOB_SEEKER" %}
-
-                    {% if is_saved %}
-                        <form method="post" action="{% url 'jobs:job_unsaved_view' job.pk %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn-unsave">
-                                ❤️ Unsave Job
-                            </button>
-                        </form>
-                    {% else %}
-                        <form method="post" action="{% url 'jobs:job_saved_view' job.pk %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn-save">
-                                🤍 Save Job
-                            </button>
-                        </form>
-                    {% endif %}
-
-                    {% if not applied %}
-                        <a href="{% url 'application:apply_view' job.pk %}" class="btn-apply">
-                            Apply Now
-                        </a>
-                    {% endif %}
-
-                {% endif %}
-
-            </div>
-
-        </div>
-
+  <!-- Top action bar -->
+  <div class="top-bar">
+    <div class="top-left">
+      {# Back link - update URL name if different in your project #}
+      <a href="{% url 'jobs:job_list' %}" class="back-link">← Back to Jobs</a>
+      <div style="color:var(--muted)">| {{ job.location }}</div>
     </div>
 
+    <div class="action-group">
+      {% if request.user.is_authenticated and request.user.role == "JOB_SEEKER" %}
+        {% if is_saved %}
+          <form method="post" action="{% url 'jobs:job_unsaved_view' job.pk %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="icon-btn unsave">❤️ Saved</button>
+          </form>
+        {% else %}
+          <form method="post" action="{% url 'jobs:job_saved_view' job.pk %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="icon-btn save">🤍 Save Job</button>
+          </form>
+        {% endif %}
+
+        {% if not applied %}
+          <a href="{% url 'application:apply_view' job.pk %}" class="icon-btn primary">Apply Now</a>
+        {% else %}
+          <span class="icon-btn" title="Already applied">Applied</span>
+        {% endif %}
+      {% else %}
+        <a href="#" class="icon-btn primary">Apply Now</a>
+        <a href="#" class="icon-btn">Save Job</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <h1 class="job-title">{{ job.title }}</h1>
+        <div class="meta-row">
+          <span class="badge">{{ job.get_job_type_display }}</span>
+          <span class="pill">{{ job.experience_level|default:"Mid Level" }}</span>
+          {% if job.salary_range %}
+            <span class="pill">💰 {{ job.salary_range }}</span>
+          {% endif %}
+          <span class="pill">📍 {{ job.location }}</span>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div>
+          <a href="#" class="company-link">{{ job.company_name }}</a>
+        </div>
+        <div class="small-muted">
+          <span>⭐ {{ job.company_rating|default:"4.8" }}</span>
+          <span style="margin-left:8px;">• {{ job.employees_count|default:"500+" }} employees</span>
+        </div>
+        <div class="small-muted">Posted {{ job.created_at|timesince }} ago</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main grid -->
+  <div class="main-grid">
+
+    <!-- Left column: Job details -->
+    <div class="card">
+      <h3 class="section-title">Job Description</h3>
+      <div class="text-body">
+        {{ job.description|safe }}
+      </div>
+
+      {% if job.responsibilities %}
+        <h3 class="section-title">Responsibilities</h3>
+        <ul class="list-compact">
+          {% for item in job.responsibilities.splitlines %}
+            {% if item|trim %}
+              <li>{{ item }}</li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <h3 class="section-title">Requirements</h3>
+      <ul class="list-compact">
+        {% if job.requirements %}
+          {% for req in job.requirements.splitlines %}
+            {% if req|trim %}
+              <li>{{ req }}</li>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          <li>Django</li>
+          <li>PostgreSQL</li>
+          <li>REST API</li>
+          <li>Git</li>
+        {% endif %}
+      </ul>
+
+      {% if job.benefits %}
+        <h3 class="section-title">Benefits</h3>
+        <ul class="list-compact">
+          {% for benefit in job.benefits.splitlines %}
+            {% if benefit|trim %}
+              <li>{{ benefit }}</li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <h3 class="section-title">Skills</h3>
+      <div class="chips">
+        {% if job.skills %}
+          {% for skill in job.skills.split(",") %}
+            <span class="chip">{{ skill|trim }}</span>
+          {% endfor %}
+        {% else %}
+          <span class="chip">Python</span>
+          <span class="chip">Django</span>
+          <span class="chip">REST API</span>
+          <span class="chip">PostgreSQL</span>
+          <span class="chip">Git</span>
+        {% endif %}
+      </div>
+
+      <div class="divider"></div>
+
+      <h3 class="section-title">About {{ job.company_name }}</h3>
+      <div class="text-body">
+        {{ job.company_overview|default:"Google Nepal is a leading technology company..." }}
+      </div>
+
+      {% if similar_jobs %}
+        <h3 class="section-title">Similar Jobs</h3>
+        <ul class="similar-jobs">
+          {% for sj in similar_jobs %}
+            <li><a href="{% url 'jobs:job_detail' sj.pk %}">• {{ sj.title }}</a></li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <h3 class="section-title">Similar Jobs</h3>
+        <ul class="similar-jobs">
+          <li><a href="#">• Backend Developer</a></li>
+          <li><a href="#">• Python Developer</a></li>
+          <li><a href="#">• Django Engineer</a></li>
+        </ul>
+      {% endif %}
+    </div>
+
+    <!-- Right column: Company card -->
+    <aside class="card">
+      <div class="sidebar-header" style="text-transform:uppercase; font-size:12px; color:#94a3b8; font-weight:700; letter-spacing:1px; text-align:center; margin-bottom:12px;">
+        Company
+      </div>
+
+      <div class="company-logo">
+        {% if job.company_logo_url %}
+          <img src="{{ job.company_logo_url }}" alt="{{ job.company_name }}" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:12px;">
+        {% else %}
+          🏢
+        {% endif %}
+      </div>
+
+      <div class="company-name">{{ job.company_name }}</div>
+      <div class="company-sub">{{ job.industry|default:"Technology" }} · {{ job.location }}</div>
+
+      <div class="company-stats">
+        <div class="stat">⭐ <strong>{{ job.company_rating|default:"4.8" }}</strong></div>
+        <div class="stat">👥 <strong>{{ job.employees_count|default:"500+" }}</strong></div>
+        {% if job.website %}
+          <div class="stat">🔗 <a href="{{ job.website }}" target="_blank" rel="noopener" style="color:var(--muted); text-decoration:none;">{{ job.website|replace:"https://",""|replace:"http://","" }}</a></div>
+        {% endif %}
+      </div>
+
+      <div class="sidebar-actions">
+        <a href="#" class="btn website">🌐 View Website</a>
+
+        {% if request.user.is_authenticated and request.user.role == "JOB_SEEKER" %}
+          {% if not applied %}
+            <a href="{% url 'application:apply_view' job.pk %}" class="btn primary">Apply Now</a>
+          {% else %}
+            <span class="btn" aria-disabled="true">Already Applied</span>
+          {% endif %}
+
+          {% if is_saved %}
+            <form method="post" action="{% url 'jobs:job_unsaved_view' job.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="btn unsave" style="background:var(--danger); color:#fff; border-color:transparent;">Unsave Job</button>
+            </form>
+          {% else %}
+            <form method="post" action="{% url 'jobs:job_saved_view' job.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="btn" style="background:var(--success); color:#fff; border-color:transparent;">Save Job</button>
+            </form>
+          {% endif %}
+        {% else %}
+          <a href="#" class="btn primary">Apply Now</a>
+          <a href="#" class="btn outline">Save Job</a>
+        {% endif %}
+
+        <a href="#" class="btn">View Company</a>
+      </div>
+    </aside>
+
+  </div>
 </div>
 
 {% endblock %}
