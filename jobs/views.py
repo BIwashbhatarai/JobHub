@@ -8,6 +8,7 @@ from application.models import Application
 from django.db.models import Q
 from django.core.paginator import Paginator
 from .models import Saved_job
+from accounts.models import Company
 
 
 @login_required
@@ -42,10 +43,14 @@ def job_list_view(request):
     experience = request.GET.get("experience")
     sort = request.GET.get("sort")
 
-    jobs = Job.objects.filter(
-        is_active=True,
-        application_deadline__gte=timezone.now().date(),
-    ).order_by("-created_at")
+    jobs = (
+        Job.objects.select_related("recruiter")
+        .filter(
+            is_active=True,
+            application_deadline__gte=timezone.now().date(),
+        )
+        .order_by("-created_at")
+    )
 
     if search:
         jobs = jobs.filter(
@@ -60,15 +65,14 @@ def job_list_view(request):
     if experience:
         jobs = jobs.filter(experience_level=experience)
 
-    if sort:
-        if sort == "oldest":
-            jobs = jobs.order_by("created_at")
-        elif sort == "newest":
-            jobs = jobs.order_by("-created_at")
-        elif sort == "salary_low":
-            jobs = jobs.order_by("salary")
-        elif sort == "salary_high":
-            jobs = jobs.order_by("-salary")
+    if sort == "oldest":
+        jobs = jobs.order_by("created_at")
+    elif sort == "newest":
+        jobs = jobs.order_by("-created_at")
+    elif sort == "salary_low":
+        jobs = jobs.order_by("salary")
+    elif sort == "salary_high":
+        jobs = jobs.order_by("-salary")
 
     paginator = Paginator(jobs, 8)
     page_number = request.GET.get("page")
@@ -96,13 +100,18 @@ def job_detail_view(request, pk):
         job=job,
     ).exists()
 
+    company = job.recruiter.company
+    requirements = job.requirements.split("\n")
+
     return render(
         request,
         "jobs/job_details.html",
         {
             "job": job,
+            "company": company,
             "applied": applied,
             "is_saved": is_saved,
+            "requirements": requirements,
         },
     )
 

@@ -79,6 +79,7 @@
   .hero-right { text-align:right; min-width:200px; }
   .company-link { color:var(--accent); font-weight:700; text-decoration:none; }
   .small-muted { color:var(--muted); font-size:13px; margin-top:6px; }
+  .deadline { color:var(--danger); font-size:13px; font-weight:600; margin-top:4px; }
 
   /* Grid */
   .main-grid {
@@ -97,8 +98,7 @@
 
   /* Left content */
   .section-title { font-size:16px; font-weight:700; margin:0 0 10px 0; color:#0f172a; }
-  .text-body { color:var(--muted); line-height:1.6; margin-bottom:16px; white-space:pre-wrap; }
-  .list-compact { margin:8px 0 16px 0; padding-left:20px; color:var(--muted); }
+  .text-body { color:var(--muted); line-height:1.6; margin-bottom:16px; }
   .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
   .chip { background:#e0f2fe; color:#0369a1; padding:6px 12px; border-radius:6px; font-weight:700; font-size:13px; }
 
@@ -112,16 +112,22 @@
   .company-stats .stat { display:flex; gap:6px; align-items:center; }
 
   .sidebar-actions { display:flex; flex-direction:column; gap:10px; margin-top:6px; }
-  .btn { padding:10px 12px; border-radius:8px; font-weight:700; text-align:center; cursor:pointer; border:1px solid var(--border); background:var(--card); text-decoration:none; color:var(--muted); }
+  .btn { padding:10px 12px; border-radius:8px; font-weight:700; text-align:center; cursor:pointer; border:1px solid var(--border); background:var(--card); text-decoration:none; color:var(--muted); transition: all 0.2s ease; }
+  .btn:hover { opacity: 0.9; }
   .btn.primary { background:var(--accent); color:#fff; border-color:transparent; }
   .btn.outline { background:transparent; color:var(--muted); }
+  .btn.outline:hover { background: #f8fafc; border-color: var(--muted); }
   .btn.website { background:#f8fafc; color:#0f172a; }
 
   .divider { height:1px; background:var(--border); margin:18px 0; border-radius:2px; }
-
-  /* Similar jobs */
-  .similar-jobs { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
-  .similar-jobs a { color:var(--accent); text-decoration:none; font-weight:600; }
+  .company-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Fills the container completely */
+    transform: scale(1.7); /* Zooms the image in by 10% */
+    border-radius: 18px;
+    display: block;
+  }
 
   @media (max-width:900px){
     .main-grid { grid-template-columns: 1fr; }
@@ -131,213 +137,163 @@
   }
 </style>
 
-<div class="container">
-
-  <!-- Top action bar -->
-  <div class="top-bar">
-    <div class="top-left">
-      {# Back link - update URL name if different in your project #}
-      <a href="{% url 'jobs:job_list' %}" class="back-link">← Back to Jobs</a>
-      <div style="color:var(--muted)">| {{ job.location }}</div>
-    </div>
-
-    <div class="action-group">
-      {% if request.user.is_authenticated and request.user.role == "JOB_SEEKER" %}
-        {% if is_saved %}
-          <form method="post" action="{% url 'jobs:job_unsaved_view' job.pk %}" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit" class="icon-btn unsave">❤️ Saved</button>
-          </form>
-        {% else %}
-          <form method="post" action="{% url 'jobs:job_saved_view' job.pk %}" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit" class="icon-btn save">🤍 Save Job</button>
-          </form>
-        {% endif %}
-
-        {% if not applied %}
-          <a href="{% url 'application:apply_view' job.pk %}" class="icon-btn primary">Apply Now</a>
-        {% else %}
-          <span class="icon-btn" title="Already applied">Applied</span>
-        {% endif %}
-      {% else %}
-        <a href="#" class="icon-btn primary">Apply Now</a>
-        <a href="#" class="icon-btn">Save Job</a>
-      {% endif %}
-    </div>
-  </div>
-
-  <!-- Hero -->
-  <div class="hero">
+<!-- Hero -->
+<div class="hero">
     <div class="hero-inner">
-      <div class="hero-left">
-        <h1 class="job-title">{{ job.title }}</h1>
-        <div class="meta-row">
-          <span class="badge">{{ job.get_job_type_display }}</span>
-          <span class="pill">{{ job.experience_level|default:"Mid Level" }}</span>
-          {% if job.salary_range %}
-            <span class="pill">💰 {{ job.salary_range }}</span>
-          {% endif %}
-          <span class="pill">📍 {{ job.location }}</span>
-        </div>
-      </div>
 
-      <div class="hero-right">
-        <div>
-          <a href="#" class="company-link">{{ job.company_name }}</a>
+        <div class="hero-left">
+
+            <h1 class="job-title">
+                {{job.title}}
+            </h1>
+
+            <div class="meta-row">
+                <span class="badge">
+                    {{job.get_job_type_display}}
+                </span>
+
+                <span class="pill">
+                    {{job.get_experience_level_display}}
+                </span>
+
+                {% if job.salary %}
+                <span class="pill">
+                    💰 {{job.salary}}
+                </span>
+                {% endif %}
+
+                <span class="pill">
+                    📍 {{job.location}}
+                </span>
+            </div>
+
         </div>
-        <div class="small-muted">
-          <span>⭐ {{ job.company_rating|default:"4.8" }}</span>
-          <span style="margin-left:8px;">• {{ job.employees_count|default:"500+" }} employees</span>
+
+
+        <div class="hero-right">
+
+            <div>
+                <a href="{% url 'company_detail_view' company.pk %}" class="company-link">
+                    {{job.company_name}}
+                </a>
+            </div>
+
+            <div class="small-muted">
+                Posted {{job.created_at|timesince}} ago
+            </div>
+
+            {% if job.application_deadline %}
+            <div class="deadline">
+                Deadline: {{ job.application_deadline|date:"M d, Y" }}
+            </div>
+            {% endif %}
+
         </div>
-        <div class="small-muted">Posted {{ job.created_at|timesince }} ago</div>
-      </div>
+
     </div>
-  </div>
+</div>
 
-  <!-- Main grid -->
-  <div class="main-grid">
 
-    <!-- Left column: Job details -->
+<!-- Main grid -->
+<div class="main-grid">
+
+    <!-- Left Column -->
     <div class="card">
-      <h3 class="section-title">Job Description</h3>
-      <div class="text-body">
-        {{ job.description|safe }}
-      </div>
 
-      {% if job.responsibilities %}
-        <h3 class="section-title">Responsibilities</h3>
-        <ul class="list-compact">
-          {% for item in job.responsibilities.splitlines %}
-            {% if item|trim %}
-              <li>{{ item }}</li>
-            {% endif %}
-          {% endfor %}
-        </ul>
-      {% endif %}
+        <h3 class="section-title">
+            Job Description
+        </h3>
 
-      <h3 class="section-title">Requirements</h3>
-      <ul class="list-compact">
-        {% if job.requirements %}
-          {% for req in job.requirements.splitlines %}
-            {% if req|trim %}
-              <li>{{ req }}</li>
-            {% endif %}
-          {% endfor %}
-        {% else %}
-          <li>Django</li>
-          <li>PostgreSQL</li>
-          <li>REST API</li>
-          <li>Git</li>
-        {% endif %}
-      </ul>
+        <div class="text-body">
+            <!-- Using linebreaks to properly format the TextField content -->
+            {{ job.description|linebreaks }}
+        </div>
 
-      {% if job.benefits %}
-        <h3 class="section-title">Benefits</h3>
-        <ul class="list-compact">
-          {% for benefit in job.benefits.splitlines %}
-            {% if benefit|trim %}
-              <li>{{ benefit }}</li>
-            {% endif %}
-          {% endfor %}
-        </ul>
-      {% endif %}
+        <h3 class="section-title">
+            Requirements & Responsibilities
+        </h3>
 
-      <h3 class="section-title">Skills</h3>
-      <div class="chips">
-        {% if job.skills %}
-          {% for skill in job.skills.split(",") %}
-            <span class="chip">{{ skill|trim }}</span>
-          {% endfor %}
-        {% else %}
-          <span class="chip">Python</span>
-          <span class="chip">Django</span>
-          <span class="chip">REST API</span>
-          <span class="chip">PostgreSQL</span>
-          <span class="chip">Git</span>
-        {% endif %}
-      </div>
+        <div class="text-body">
+            <!-- Using linebreaks to properly format the TextField content -->
+            {{ job.requirements|linebreaks }}
+        </div>
 
-      <div class="divider"></div>
+        <div class="divider"></div>
 
-      <h3 class="section-title">About {{ job.company_name }}</h3>
-      <div class="text-body">
-        {{ job.company_overview|default:"Google Nepal is a leading technology company..." }}
-      </div>
+        {% comment %} Placeholder for any extra fields you might add later {% endcomment %}
+        <h3 class="section-title">
+            Tags / Skills
+        </h3>
 
-      {% if similar_jobs %}
-        <h3 class="section-title">Similar Jobs</h3>
-        <ul class="similar-jobs">
-          {% for sj in similar_jobs %}
-            <li><a href="{% url 'jobs:job_detail' sj.pk %}">• {{ sj.title }}</a></li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <h3 class="section-title">Similar Jobs</h3>
-        <ul class="similar-jobs">
-          <li><a href="#">• Backend Developer</a></li>
-          <li><a href="#">• Python Developer</a></li>
-          <li><a href="#">• Django Engineer</a></li>
-        </ul>
-      {% endif %}
+        <div class="chips">
+            <span class="chip">{{job.get_job_type_display}}</span>
+            <span class="chip">{{job.get_experience_level_display}}</span>
+        </div>
+
     </div>
 
-    <!-- Right column: Company card -->
+
+    <!-- Company Sidebar -->
     <aside class="card">
-      <div class="sidebar-header" style="text-transform:uppercase; font-size:12px; color:#94a3b8; font-weight:700; letter-spacing:1px; text-align:center; margin-bottom:12px;">
-        Company
-      </div>
 
-      <div class="company-logo">
-        {% if job.company_logo_url %}
-          <img src="{{ job.company_logo_url }}" alt="{{ job.company_name }}" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:12px;">
-        {% else %}
-          🏢
-        {% endif %}
-      </div>
+        <div class="sidebar-header" style="color:var(--muted); font-size:12px; font-weight:700; margin-bottom:12px; text-align:center;">
+            COMPANY PROFILE
+        </div>
 
-      <div class="company-name">{{ job.company_name }}</div>
-      <div class="company-sub">{{ job.industry|default:"Technology" }} · {{ job.location }}</div>
+        <div class="company-logo">
+                {% if company.logo %}
+                <img
+                    src="{{company.logo.url}}"
+                     alt="{{ company.company_name }}"
+                >
+                {% else %}
+                     <img
+                        src="https://placehold.co/150x150?text={{ company.company_name|first|upper }}"
+                        alt="Company Logo"
+                    >
+                {% endif %}
+          </div>
 
-      <div class="company-stats">
-        <div class="stat">⭐ <strong>{{ job.company_rating|default:"4.8" }}</strong></div>
-        <div class="stat">👥 <strong>{{ job.employees_count|default:"500+" }}</strong></div>
-        {% if job.website %}
-          <div class="stat">🔗 <a href="{{ job.website }}" target="_blank" rel="noopener" style="color:var(--muted); text-decoration:none;">{{ job.website|replace:"https://",""|replace:"http://","" }}</a></div>
-        {% endif %}
-      </div>
+        <div class="company-name">
+            {{company.name}}
+        </div>
 
-      <div class="sidebar-actions">
-        <a href="#" class="btn website">🌐 View Website</a>
+        <div class="company-sub">
+            📍 {{company.location}}
+        </div>
 
-        {% if request.user.is_authenticated and request.user.role == "JOB_SEEKER" %}
-          {% if not applied %}
-            <a href="{% url 'application:apply_view' job.pk %}" class="btn primary">Apply Now</a>
-          {% else %}
-            <span class="btn" aria-disabled="true">Already Applied</span>
-          {% endif %}
+        <div class="sidebar-actions">
+            
+            {% if job.is_active %}
+            <a href="{% url 'application:apply_view' job.pk %}" class="btn primary">
+                Apply Now
+            </a>
+            {% else %}
+            <button class="btn outline" disabled>
+                Closed
+            </button>
+            {% endif %}
 
-          {% if is_saved %}
-            <form method="post" action="{% url 'jobs:job_unsaved_view' job.pk %}">
-              {% csrf_token %}
-              <button type="submit" class="btn unsave" style="background:var(--danger); color:#fff; border-color:transparent;">Unsave Job</button>
-            </form>
-          {% else %}
-            <form method="post" action="{% url 'jobs:job_saved_view' job.pk %}">
-              {% csrf_token %}
-              <button type="submit" class="btn" style="background:var(--success); color:#fff; border-color:transparent;">Save Job</button>
-            </form>
-          {% endif %}
-        {% else %}
-          <a href="#" class="btn primary">Apply Now</a>
-          <a href="#" class="btn outline">Save Job</a>
-        {% endif %}
+            <!-- If you pass `is_saved` boolean from the view, you can toggle this -->
+            {% if is_saved %}
+              <a href="{% url 'jobs:job_unsaved_view' job.id %}" class="btn" style="background:red;color:white;">
+                  Unsave Job
+              </a>
+            {% else %}
+            <a href="{% url 'jobs:job_saved_view' job.id %}" class="btn" style="background:#198754;color:white;">
+                Save Job
+            </a>
+            {% endif %}
 
-        <a href="#" class="btn">View Company</a>
-      </div>
+            <!-- Dedicated View Company Profile Button -->
+            <a href="{% url 'company_detail_view' company.pk %}" class="btn outline">
+                View Company Profile
+            </a>
+            
+        </div>
+
     </aside>
 
-  </div>
 </div>
 
 {% endblock %}

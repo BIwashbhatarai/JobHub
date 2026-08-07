@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Company{% endblock %}
+
+{% block content %}
+
+<style>
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family:Arial, Helvetica, sans-serif;
+    }
+
+    body{
+        background:#f5f7fb;
+    }
+
+    .container{
+        max-width:800px;
+        margin:40px auto;
+        background:#fff;
+        padding:35px;
+        border-radius:12px;
+        box-shadow:0 5px 20px rgba(0,0,0,.08);
+    }
+
+    h2{
+        text-align:center;
+        color:#222;
+        margin-bottom:30px;
+    }
+
+    .logo-preview{
+        text-align:center;
+        margin-bottom:25px;
+    }
+
+    .logo-preview img{
+        width:140px;
+        height:140px;
+        object-fit:cover;
+        border-radius:12px;
+        border:1px solid #ddd;
+    }
+
+    .field{
+        margin-bottom:18px;
+    }
+
+    .field label{
+        display:block;
+        margin-bottom:6px;
+        font-weight:bold;
+        color:#444;
+    }
+
+    .field input,
+    .field textarea,
+    .field select{
+        width:100%;
+        padding:12px;
+        border:1px solid #ccc;
+        border-radius:8px;
+        font-size:15px;
+    }
+
+    .field textarea{
+        resize:vertical;
+        min-height:130px;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus{
+        outline:none;
+        border-color:#2563eb;
+    }
+
+    .errorlist{
+        color:red;
+        list-style:none;
+        margin-top:5px;
+        font-size:14px;
+    }
+
+    .btn{
+        width:100%;
+        padding:14px;
+        background:#2563eb;
+        color:#fff;
+        border:none;
+        border-radius:8px;
+        font-size:16px;
+        cursor:pointer;
+        transition:.3s;
+    }
+
+    .btn:hover{
+        background:#1d4ed8;
+    }
+</style>
+
+<div class="container">
+
+    <h2>Edit Company Profile</h2>
+
+    {% if form.instance.logo %}
+        <div class="logo-preview">
+            <img src="{{ form.instance.logo.url }}" alt="Company Logo">
+        </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="field">
+
+                {{ field.label_tag }}
+
+                {{ field }}
+
+                {% if field.errors %}
+                    {{ field.errors }}
+                {% endif %}
+
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn">
+            Update Company
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% block title %}Company Details{% endblock %}
+
+{% block content %}
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+}
+
+.container{
+    max-width:1100px;
+    margin:40px auto;
+    padding:0 20px;
+}
+
+.card{
+    background:#fff;
+    border-radius:14px;
+    padding:35px;
+    margin-bottom:30px;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+
+/* Company Header */
+
+.company-header{
+    display:flex;
+    gap:35px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+.company-logo{
+    width:150px;
+    height:150px;
+    border-radius:15px;
+    background:#e5e7eb;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#666;
+    font-weight:bold;
+    flex-shrink:0;
+}
+
+.company-info{
+    flex:1;
+    width:100%;%
+}
+
+.company-info h1{
+    font-size:32px;
+    color:#111827;
+    margin-bottom:8px;
+}
+
+.industry{
+    display:inline-block;
+    background:#dbeafe;
+    color:#2563eb;
+    padding:6px 14px;
+    border-radius:30px;
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.info-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:15px;
+}
+
+.info-item{
+    color:#555;
+}
+
+.info-item strong{
+    color:#111827;
+}
+
+.info-item a{
+    color:#2563eb;
+    text-decoration:none;
+}
+
+.info-item a:hover{
+    text-decoration:underline;
+}
+
+/* Sections */
+
+.section-title{
+    font-size:26px;
+    margin-bottom:20px;
+    color:#111827;
+}
+
+.about p{
+    color:#555;
+    line-height:1.8;
+}
+
+/* Jobs */
+
+.jobs{
+    display:grid;
+    gap:20px;
+}
+
+.job-card{
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-left:5px solid #2563eb;
+    border-radius:12px;
+    padding:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    transition:.3s;
+}
+
+.job-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 10px 20px rgba(0,0,0,.08);
+}
+
+.job-title{
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:8px;
+    color:#111827;
+}
+
+.job-meta{
+    color:#666;
+}
+
+.job-meta span{
+    margin-right:20px;
+}
+
+.btn{
+    background:#2563eb;
+    color:white;
+    text-decoration:none;
+    padding:10px 18px;
+    border-radius:8px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.btn:hover{
+    background:#1d4ed8;
+}
+.company-logo{
+    width:150px;
+    height:150px;
+    border-radius:15px;
+    overflow:hidden;
+    flex-shrink:0;
+    background:#e5e7eb;
+}
+
+.company-logo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+.empty-jobs{
+    background:#fff;
+    border:2px dashed #d1d5db;
+    border-radius:12px;
+    padding:50px 30px;
+    text-align:center;
+}
+
+.empty-icon{
+    font-size:50px;
+    margin-bottom:15px;
+}
+
+.empty-jobs h3{
+    color:#111827;
+    font-size:24px;
+    margin-bottom:10px;
+}
+
+.empty-jobs p{
+    color:#6b7280;
+    max-width:500px;
+    margin:auto;
+    line-height:1.7;
+}
+
+@media(max-width:768px){
+
+    .company-header{
+        flex-direction:column;
+        text-align:center;
+    }
+
+    .job-card{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:20px;
+    }
+
+    .btn{
+        width:100%;
+        text-align:center;
+    }
+
+}
+</style>
+
+<div class="container">
+
+    <!-- Company Information -->
+
+    <div class="card">
+
+        <div class="company-header">
+
+            <div class="company-logo">
+                {% if company.logo %}
+                <img
+                    src="{{company.logo.url}}"
+                     alt="{{ company.company_name }}"
+                >
+                {% else %}
+                     <img
+                        src="https://placehold.co/150x150?text={{ company.company_name|first|upper }}"
+                        alt="Company Logo"
+                    >
+                {% endif %}
+            </div>
+
+            <div class="company-info">
+
+                <h1>{{company.name}}</h1>
+
+                <div class="industry">
+                    {{company.industry}}
+                </div>
+
+                <div class="info-grid">
+
+                    <div class="info-item">
+                        <strong>📍 Location:</strong> {{company.location}}
+                    </div>
+
+                    <div class="info-item">
+                        <strong>👥 Employees:</strong> {{company.company_size}}
+                    </div>
+
+                    <div class="info-item">
+                        <strong>📅 Founded:</strong> {{company.founded_year}}
+                    </div>
+
+                    <div class="info-item" target="_blank" rel="noopener noreferrer">
+                        <strong>🌐 Website:</strong>
+                        <a href="{{company.website}}">{{company.website}}</a>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- About Company -->
+
+    <div class="card about">
+
+        <h2 class="section-title">
+            About Company
+        </h2>
+
+        <p>
+            {{company.about}}
+        </p>
+
+    </div>
+
+    <!-- Current Open Positions -->
+
+    <div class="card">
+
+        <h2 class="section-title">
+            Current Open Positions
+        </h2>
+
+        <div class="jobs">
+            {% if jobs %}
+
+            {% for job in jobs %}
+
+            <div class="job-card">
+
+                <div>
+                    <div class="job-title">{{job.title}}</div>
+
+                    <div class="job-meta">
+                        <span>📍 {{job.location}}</span>
+                        <span>💼 {{job.get_job_type_display}}</span>
+                    </div>
+                </div>
+
+                <a href="{% url 'jobs:job_detail_view' job.id %}" class="btn">
+                    View Job
+                </a>
+
+            </div>
+            {% endfor %}
+            {% else %}
+
+            <div class="empty-jobs">
+                <div class="empty-icon">💼</div>
+
+                <h3>No Open Positions</h3>
+
+                <p>
+                    This company doesn't have any open positions at the moment.
+                    Please check back later for future opportunities.
+                </p>
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

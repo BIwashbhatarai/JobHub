@@ -1,15 +1,18 @@
-from django.shortcuts import render, redirect
-from .forms import RegistrationForm
-from .forms import LoginForm
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import (
+    RegistrationForm,
+    LoginForm,
+    ProfileForm,
+    RecruiterProfileForm,
+    CompanyForm,
+)
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
-from .forms import ProfileForm
 from jobs.models import Job
 from application.models import Application
 from django.core.paginator import Paginator
-from .forms import RecruiterProfileForm
 from jobs.models import Saved_job
 import secrets
 from django.core.mail import send_mail
@@ -18,6 +21,7 @@ from textwrap import dedent
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from datetime import timedelta
+from .models import Company
 
 User = get_user_model()
 
@@ -27,6 +31,11 @@ def generate_otp():
 
 
 def register_view(request):
+
+    if request.user.is_authenticated and request.user.role == "RECRUITER":
+        return redirect("recruiter_dashboard_view")
+    elif request.user.is_authenticated and request.user.role == "JOB_SEEKER":
+        return redirect("recruiter_dashboard_view")
 
     if request.method == "POST":
         form = RegistrationForm(request.POST)
@@ -339,3 +348,89 @@ def verify_otp_view(request):
             messages.error(request, "Invalid OTP")
 
     return render(request, "accounts/otp_registration.html")
+
+
+@login_required
+def create_company_view(request):
+    if request.user.role != "RECRUITER":
+        messages.error(request, "Only the recruiter can create the company")
+        return redirect("job_seeker_dashboard_view")
+
+    if hasattr(request.user, "company"):
+        messages.info(
+            request, "You already have a company profile. You can edit it here."
+        )
+        return redirect(
+            "recruiter_dashboard_view"
+        )  # replace it with the edit company page
+
+    # if Company.objects.filter(owner=request.user).exists() we can do this too
+
+    if request.method == "POST":
+        form = CompanyForm(request.POST, request.FILES)
+        if form.is_valid():
+            company = form.save(commit=False)
+            company.owner = request.user
+            company.save()
+            messages.success(request, "Company created successfully")
+            return redirect("recruiter_dashboard_view")
+        else:
+            messages.error(request, "Please correct the errors below")
+    else:
+        form = CompanyForm()
+
+    return render(
+        request,
+        "accounts/create_company.html",
+        {
+            "form": form,
+        },
+    )
+
+
+@login_required
+def edit_company_view(request):
+    if request.user.role != "RECRUITER":
+        messages.error(request, "Only the recruiter can edit the company profile")
+        return redirect("job_seeker_dashboard_view")
+
+    if not hasattr(request.user, "company"):
+        messages.info(
+            request, "You don't have a company profile yet. Please create one first."
+        )
+        return redirect("create_company_view")  # replace it with the edit company page
+
+    company = request.user.company
+    if request.method == "POST":
+
+        form = CompanyForm(request.POST, request.FILES, instance=company)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Successsfully updated the company profile")
+            return redirect("recruiter_dashboard_view")
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = CompanyForm(instance=company)
+    return render(
+        request,
+        "accounts/edit_company.html",
+        {
+            "form": form,
+        },
+    )
+
+
+@login_required
+def company_detail_view(request, pk):
+    company = get_object_or_404(Company, id=pk)
+    jobs = Job.objects.filter(recruiter=company.owner)
+    return render(
+        request,
+        "accounts/company_detail.html",
+        {
+            "company": company,
+            "jobs": jobs,
+        },
+    )
